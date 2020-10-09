@@ -27,7 +27,7 @@ export function MediaViewer({ image }) {
     <MediaContainer>
         <img style={{ width: "100%"}} src={ BASE_URI + "/" + image.image}></img>
         <HighlightContainer>
-          { image.highlights.map(h => <Tooltip title={h.name}><Highlight style={{ 
+          { image.highlights.map(h => <Tooltip key={h.id} title={h.name}><Highlight style={{ 
             top: `${(100 / image.height) * h.height}%`, 
             left: `${(100 / image.width) * h.x}%`,
             height: `${(100 / image.height) * h.height}%`,
