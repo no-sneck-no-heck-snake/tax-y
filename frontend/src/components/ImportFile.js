@@ -4,7 +4,7 @@ import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload'; 
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
             left: theme.spacing(2),
         },
     },
+    input: {
+        display: 'none'
+    }
 }));
 
 const actions = [
@@ -49,6 +52,11 @@ export function ImportFile() {
         setOpen(true);
     };
 
+    const handleClick = () => {
+     var input = document.getElementById("doc-upload");
+     input.click()
+    }
+
     return (
         <div className={classes.root}>
             <div className={classes.exampleWrapper}>
@@ -65,10 +73,11 @@ export function ImportFile() {
                             key={action.name}
                             icon={action.icon}
                             tooltipTitle={action.name}
-                            onClick={handleClose}
+                            onClick={handleClick}
                         />
                     ))}
                 </SpeedDial>
+                <input accept="image/*" className={classes.input}  id="doc-upload" type="file" />
             </div>
         </div>
     );
