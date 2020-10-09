@@ -6,7 +6,7 @@ const Nav = styled.nav`
 `;
 const NavContent = styled.section`
   margin: auto;
-  max-width: 900px;
+  max-width: 1200px;
 `;
 
 export function Navigation() {

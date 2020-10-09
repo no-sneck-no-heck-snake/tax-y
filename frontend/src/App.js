@@ -25,7 +25,7 @@ const Content = styled.section`
   display: flex;
   flex-direction: column;
   margin: auto;
-  max-width: 900px;
+  max-width: 1200px;
 `;
 
 function App() {
