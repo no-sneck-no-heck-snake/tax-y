@@ -4,8 +4,9 @@ import styled from "styled-components";
 import useFetch from 'use-http'
 import { Save } from "@material-ui/icons"
 import { MediaViewer } from "../components/MediaViewer"
-import { Grid, Card, FormControl, InputLabel, Select, TextField, Button, CardActions, CardContent } from "@material-ui/core"
+import { Grid, Card, FormControl, InputLabel, Select, TextField, Button, CardActions, CardContent, Snackbar } from "@material-ui/core"
 import { DOCUMENT_TYPES } from "../Config"
+import MuiAlert from '@material-ui/lab/Alert';
 
 const FormGridRow = styled(Grid)`
   padding: 10px 0px;
@@ -79,7 +80,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
       });
     } else {
 
-      const fieldValues = taxEntry.content.map(c => ({ name: c.name, value: c.value }));
+      const fieldValues = taxEntry.content.map(c => ({ ...c, name: c.name, value: c.value }));
       const val = fieldValues.find(v => v.name === name);
       if (val) {
         val.value = fieldValue
@@ -90,9 +91,18 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
         ["content"]: fieldValues
       });
     }
-   
   };
 
+  // Sucess Snackbar
+  const [successOpen, setOpenSuccess] = React.useState(false);
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSuccess(false);
+  };
+
+  // Fileds
   const [fields, setFields] = useState([])
   const handleTypeChange = (event) => {
     handleChange(event);
@@ -107,7 +117,8 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
   }
 
   async function updateEntry() {
-    const updatedEntry = await put('/entry/' + taxEntry.id, taxEntry)
+    const updatedEntry = await put('/entry/' + taxEntry.id, taxEntry);
+    setOpenSuccess(true);
   }
 
   function getEntryValue(name) {
@@ -115,7 +126,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
     return field ? field.value : "";
   }
 
-  return <BottomActionsCard style={{width: "100%"}}>
+  return <><BottomActionsCard style={{width: "100%"}}>
   <CardContent>
     <Grid container>
       <FormGridRow container item xs={12}>
@@ -165,4 +176,14 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
     </Button>
   </CardActions>
 </BottomActionsCard>
+<Snackbar open={successOpen} autoHideDuration={6000} onClose={handleClose}>
+  <Alert onClose={handleClose} severity="success">
+    Erfolgreich gespeichert!
+  </Alert>
+</Snackbar>
+</>
+}
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 }

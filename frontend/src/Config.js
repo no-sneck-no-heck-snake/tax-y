@@ -8,9 +8,9 @@ export const DOCUMENT_TYPES = [
         label: "Vermögensausweis",
         fields: [
             {
-                label: "Betrag",
-                name: "amount",
-                type: "number"
+							label: "Betrag",
+							name: "amount",
+							type: "number"
 						},
 						{
 							label: "Jahr",
