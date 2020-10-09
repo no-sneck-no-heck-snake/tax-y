@@ -72,7 +72,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
   };
 
   async function updateEntry() {
-    const updatedEntry = await put('/entry/1', entry.id)
+    const updatedEntry = await put('/entry/1', taxEntry.id)
   }
 
   return <BottomActionsCard style={{width: "100%"}}>
