@@ -49,7 +49,7 @@ def make_app():
         base_path.mkdir(parents=True, exist_ok=True)
 
         #target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
-        #uploaded_file.save(str(target_file))
+        # uploaded_file.save(str(target_file))
 
         if Path(uploaded_file.filename).suffix == ".pdf":
             some_image = convert_from_bytes(uploaded_file.read())[0]
@@ -95,12 +95,12 @@ def make_app():
 
     @app.route("/entry/<ObjectId:object_id>", methods=['PUT'])
     def update_entry(object_id):
-        response = current_app.mongo.db.taxinfo.update({'_id': object_id}, {"$set":{'entry':request.get_json()}})
+        response = current_app.mongo.db.taxinfo.update({'_id': object_id}, {"$set": {'entry': request.get_json()}})
         return response
 
     @app.route("/info", methods=['GET'])
     def info():
-        entries = current_app.mongo.db.taxinfo.find({'user':0})
+        entries = current_app.mongo.db.taxinfo.find({'user': 0})
         deductions = []
         income = []
         total_income = 0
@@ -117,24 +117,35 @@ def make_app():
             elif entry_type == "bill":
                 for marker in e["content"]:
                     if marker["name"] == "amount":
-                        deductions.append({"name": e["file"], "value": marker["value"]})   
+                        deductions.append({"name": e["file"], "value": marker["value"]})
 
             elif entry_type == "interest_statement":
                 for marker in e["content"]:
                     if marker["name"] == "amount":
-                        capital.append({"name": e["file"], "value": marker["value"]})    
+                        capital.append({"name": e["file"], "value": marker["value"]})
                     if marker["name"] == "intrests":
                         income.append({"name": e["file"], "value": marker["value"]})
         for i in income:
-            total_income+= i["value"]
+            total_income += i["value"]
         for c in capital:
             total_capital += c["value"]
         return {
             "deductions": deductions,
             "income": income,
-            "total_income": total_income,
-            "total_capital": total_capital,
+            "totalIncome": total_income,
+            "totalCapital": total_capital,
             "capital": capital
+        }
+
+    @app.route("/deductions_categories", methods=['GET'])
+    def deduction_categories():
+        return {
+            "deduction_categories":
+            [
+                {"type": "kids", "displayName": "Kinder", "color": "#00C49F", "icon": "child", "maxDeduction": 6942},
+                {"type": "study", "displayName": "Ausbildung", "color": "#0088FE", "icon": "school", "maxDeduction": 1234},
+                {"type": "3a", "displayName": "3a", "color": "#FF8042", "icon": "poll", "maxDeduction": 6510},
+            ]
         }
 
     @app.route("/deductions", methods=['GET'])
@@ -211,6 +222,6 @@ def make_app():
 
     @app.route('/data/<path:path>')
     def send_data(path):
-        return send_from_directory('../data', path)
+        return send_from_directory(os.path.join('..', 'data'), path)
 
     return app
