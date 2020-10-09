@@ -96,7 +96,6 @@ def classify_document(document_content, indexes):
 
 
 def scan_document(image):
-
     # Simple image to string
     text_result = pytesseract.image_to_string(image, lang='deu')
     indexes = pytesseract.image_to_data(image, lang="deu", output_type=pytesseract.Output.DICT)

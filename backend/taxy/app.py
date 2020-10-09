@@ -47,9 +47,9 @@ def make_app():
         base_path.mkdir(parents=True, exist_ok=True)
 
         if uploaded_file.filename.suffix == ".pdf":
-            someImage = convert_from_path(str(uploaded_file.filename))[0]
+            some_image = convert_from_path(str(uploaded_file.filename))[0]
             target_file = base_path / (str(uuid4()) + ".jpg")
-            someImage.save(target_file, 'JPEG')
+            some_image.save(target_file, 'JPEG')
         else:
             target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
             uploaded_file.save(str(target_file))
