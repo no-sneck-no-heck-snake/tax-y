@@ -96,6 +96,22 @@ def make_app():
 
     @app.route("/info", methods=['GET'])
     def info():
+        entries = current_app.mongo.db.taxinfo.find({'user':0})
+        deductions = []
+        income = []
+        capital = []
+        for entry in entries:
+            e = entry["entry"]
+            entry_type = e["type"]
+            if entry_type == "wage_card":
+                for marker in e["content"]:
+                    if marker["name"] == "amount":
+                        income.append({"name": e["file"], "value": marker["value"]})
+        return {
+            "deductions": deductions,
+            "income": income,
+            "capital": capital
+        }
         return {
             "deductions": [{"name": "Studienkosten", "value": 1200, "maxDeduction": 12000},
                            {"name": "Transport", "value": 69, "maxDeduction": 420}],
@@ -126,7 +142,23 @@ def make_app():
                 {
                     "name": "Kinder",
                     "currentDeduction": 1000
-                }
+                },
+                                {
+                    "name": "3a",
+                    "maxDeduction": 6590,
+                    "currentDeduction": 2340,
+                    "entries":
+                    [
+                        {
+                            "name": "Fondsparplan",
+                            "value": 1000,
+                        },
+                        {
+                            "name": "Sparkonto",
+                            "value": 1340,
+                        }
+                    ]
+                },
             ]
         }
 
