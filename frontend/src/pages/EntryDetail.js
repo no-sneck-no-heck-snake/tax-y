@@ -21,11 +21,8 @@ const StyledMediaViewer = styled(MediaViewer)`
 `;
 
 export function EntryDetail() { 
-
   const { entryId } = useParams();
-
   const { get, response, loading, error } = useFetch()
-
   const [taxEntry, setTaxEntry] = useState({
     type: "",
     content: []
@@ -36,7 +33,9 @@ export function EntryDetail() {
   async function loadImage() {
     console.log(entryId)
     const entry = await get("/entry/" + entryId)
-    if (response.ok) setTaxEntry(entry)
+    if (response.ok) {
+       setTaxEntry(entry);
+    }
   }
 
   return <>
@@ -65,6 +64,9 @@ export function EntryDetail() {
 function CreateEntryForm({ setTaxEntry, taxEntry }) {
 
   const { put, response, loading, error } = useFetch()
+  useEffect(() => {
+    updateFields()
+  }, [taxEntry]);
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -93,13 +95,16 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
 
   const [fields, setFields] = useState([])
   const handleTypeChange = (event) => {
-    const type = DOCUMENT_TYPES.find(t => t.name === event.target.value);
+    handleChange(event);
+    updateFields();
+  }
+
+  function updateFields() {
+    const type = DOCUMENT_TYPES.find(t => t.name === taxEntry.type);
     if (type) {
       setFields(type.fields);
     }
-
-    handleChange(event);
-  };
+  }
 
   async function updateEntry() {
     const updatedEntry = await put('/entry/1', taxEntry.id)

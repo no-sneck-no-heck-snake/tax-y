@@ -20,7 +20,7 @@ export const DOCUMENT_TYPES = [
         fields: [
             {
                 label: "Betrag",
-                name: "value",
+                name: "amount",
                 type: "number"
             }
         ]
@@ -31,7 +31,7 @@ export const DOCUMENT_TYPES = [
         fields: [
             {
                 label: "Betrag",
-                name: "value",
+                name: "amount",
                 type: "number"
             }
         ]
