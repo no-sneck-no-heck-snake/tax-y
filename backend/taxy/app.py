@@ -6,7 +6,9 @@ from http import HTTPStatus
 from flask import Flask, jsonify, request, current_app
 from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
+from flask_cors import CORS
 
+from uuid import uuid4
 from werkzeug.utils import secure_filename
 
 from taxy.document_analyzer import scan_document
@@ -17,6 +19,7 @@ from PIL import Image
 
 def make_app():
     app = Flask(__name__)
+    CORS(app)
     #app.url_map.strict_slashes = False
     app.debug = True
     app.host = "0.0.0.0"
@@ -30,6 +33,7 @@ def make_app():
 
     @app.route("/document", methods=["POST"])
     def root():
+        user_session = request.cookies.get('_taxy_session', 0)
         if "file" not in request.files:
             return {"message": "No file given in the request"}, HTTPStatus.BAD_REQUEST
 
@@ -38,7 +42,7 @@ def make_app():
             return {"message": "No file selected for uploading"}, HTTPStatus.BAD_REQUEST
 
         base_path = app.config["UPLOAD_FOLDER"]
-        target_file = base_path / secure_filename(uploaded_file.filename)
+        target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
 
         # ensure directory for the uploaded doc exists
         base_path.mkdir(parents=True, exist_ok=True)
@@ -47,10 +51,20 @@ def make_app():
         uploaded_file.save(str(target_file))
         result = scan_document(target_file)
 
+        print(target_file)
+        if not current_app.mongo.db.users.find_one({"_id": user_session}):
+            current_app.mongo.db.users.insert({"_id": user_session})
+
+        current_app.mongo.db.taxinfo.insert({
+            "user": user_session,
+            result[0]: result[1],
+            "document": str(target_file)
+        })
+
         return {"content": result}, HTTPStatus.CREATED
 
-    @app.route("/dummyImage", methods=['GET'])
-    def dummy_image():
+    @app.route("/entry/<id>", methods=['GET'])
+    def entry(id):
         width, height = Image.open("taxy/static/Lohn_Lohnausweis.jpg").size
         return {"image": "static/Lohn_Lohnausweis.jpg",
                 "height": height,
@@ -60,6 +74,9 @@ def make_app():
                     {"x": 169, "y": 242, "height": 69, "width": 96, "name": "No heck No Sneck! 🐍", "id": "2"},
                 ]
                 }
+    @app.route("/entry/<id>", methods =['PUT'])
+    def update_entry():
+        return {"status":"ok!"}
 
     @app.route("/info", methods=['GET'])
     def info():
@@ -67,6 +84,33 @@ def make_app():
             "deductions": [{"name": "Studienkosten", "value": 1200}],
             "income": [{"name": "Lohn", "value": 10000}, {"name": "Zins Sparkonto", "value": 100}],
             "capital": [{"name": "Sparkonto", "value": 69000}]
+        }
+
+    @app.route("/deductions", methods=['GET'])
+    def deductions():
+        return {
+            "categories": [
+                {
+                    "name": "Ausbildung",
+                    "maxDeduction": 12000,
+                    "currentDeduction": 8041,
+                    "entries":
+                    [
+                        {
+                            "name": "Kosten Uni",
+                            "value": 10000,
+                        },
+                        {
+                            "name": "Buch XY",
+                            "value": 41
+                        }
+                    ]
+                },
+                {
+                    "name": "Kinder",
+                    "currentDeduction": 1000
+                }
+            ]
         }
 
     @app.route('/static/<path:path>')

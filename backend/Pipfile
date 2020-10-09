@@ -9,6 +9,7 @@ python_version = "3.8"
 [packages]
 flask = "*"
 flask-pymongo = "*"
+flask-cors = "*"
 pytesseract = "*"
 gunicorn = "*"
 pdf2image = "*"
