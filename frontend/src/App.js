@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Home } from "./pages/Home";
-import { Penis } from "./pages/Penis";
+import { CreateEntry } from "./pages/CreateEntry";
 import { ImportFile } from "./components/ImportFile";
 import { ThemeProvider } from "@material-ui/core";
 import styled, { createGlobalStyle } from "styled-components";
@@ -37,8 +37,8 @@ function App() {
             <Navigation></Navigation>
             <Content>
               <Switch>
-                <Route path="/penis">
-                  <Penis />
+                <Route path="/create-entry">
+                  <CreateEntry />
                 </Route>
                 <Route path="/">
                   <Home />
