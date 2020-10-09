@@ -8,6 +8,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import { theme } from "./Theme";
 import { Navigation } from "./components/Navigation";
 import { Provider } from "use-http";
+import { AccountDetail } from "./pages/AccountDetail";
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -42,11 +43,11 @@ function App() {
                   <Route path="/entry/:entryId">
                     <EntryDetail />
                   </Route>
+                  <Route path="/detail/deduction">
+                    <AccountDetail />
+                  </Route>
                   <Route path="/">
                     <Home />
-                  </Route>
-                  <Route path="/detail/deduction">
-                
                   </Route>
                 </Switch>
                 <ImportFile></ImportFile>

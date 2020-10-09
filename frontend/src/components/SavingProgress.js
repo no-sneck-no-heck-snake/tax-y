@@ -1,8 +1,8 @@
 import React from "react";
 import { Line } from "rc-progress";
-import numeral from "numeral";
+import { formatFranks } from "../util";
 
-export function SavingProgress({ value, potential }) {
+export function SavingProgress({ value, potential, trailColor }) {
   const percent = (value / potential) * 100;
   let strokeColor = "#F44336";
   if (percent > 25) {
@@ -22,16 +22,15 @@ export function SavingProgress({ value, potential }) {
         justifyContent: "center",
       }}
     >
-      <div style={{ marginRight: "8px", fontSize: "12px" }}>
-        {numeral(value).format("0,0") + " Fr."} /{" "}
-        {numeral(potential).format("0,0") + " Fr."}
+      <div style={{ marginRight: "8px" }}>
+        {formatFranks(value)} / {formatFranks(potential)}
       </div>
       <div style={{ width: "50px" }}>
         <Line
           strokeWidth="14"
           strokeColor={strokeColor}
           percent={percent}
-          trailColor="rgba(255,255,255,0.5)"
+          trailColor={trailColor || "rgba(255,255,255,0.5)"}
           trailWidth="14"
         ></Line>
       </div>

@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { Grid } from "@material-ui/core";
-import numeral from "numeral";
 import { SavingProgress } from "./SavingProgress";
+import { formatFranks } from "../util";
 
 const ItemContainer = styled.div``;
 
@@ -20,7 +20,7 @@ export function SummaryEntry({ item }) {
       ></SavingProgress>
     );
   } else {
-    value = numeral(item.value).format("0,0") + " Fr.";
+    value = formatFranks(item.value);
   }
   return (
     <ItemContainer>
