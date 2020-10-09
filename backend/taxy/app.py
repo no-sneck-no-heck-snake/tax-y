@@ -5,6 +5,7 @@ from http import HTTPStatus
 import requests
 from bson.json_util import dumps
 
+from copy import deepcopy
 from flask import Flask, jsonify, request, current_app
 from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
@@ -19,6 +20,15 @@ from taxy.errors import ApiError
 
 from PIL import Image
 
+
+deduction_categories = {
+            "categories":
+            [
+                {"type": "kids", "displayName": "Kinder", "color": "#00C49F", "icon": "child", "maxDeduction": 6942},
+                {"type": "study", "displayName": "Ausbildung", "color": "#0088FE", "icon": "school", "maxDeduction": 1234},
+                {"type": "3a", "displayName": "3a", "color": "#FF8042", "icon": "poll", "maxDeduction": 6510},
+            ]
+        }
 
 def make_app():
     app = Flask(__name__)
@@ -114,11 +124,6 @@ def make_app():
                     if marker["name"] == "amount":
                         income.append({"name": e["file"], "value": marker["value"]})
 
-            elif entry_type == "bill":
-                for marker in e["content"]:
-                    if marker["name"] == "amount":
-                        deductions.append({"name": e["file"], "value": marker["value"]})
-
             elif entry_type == "interest_statement":
                 for marker in e["content"]:
                     if marker["name"] == "amount":
@@ -130,66 +135,35 @@ def make_app():
         for c in capital:
             total_capital += c["value"]
         return {
-            "deductions": deductions,
             "income": income,
             "totalIncome": total_income,
             "totalCapital": total_capital,
             "capital": capital
         }
 
-    @app.route("/deductions_categories", methods=['GET'])
-    def deduction_categories():
-        return {
-            "deduction_categories":
-            [
-                {"type": "kids", "displayName": "Kinder", "color": "#00C49F", "icon": "child", "maxDeduction": 6942},
-                {"type": "study", "displayName": "Ausbildung", "color": "#0088FE", "icon": "school", "maxDeduction": 1234},
-                {"type": "3a", "displayName": "3a", "color": "#FF8042", "icon": "poll", "maxDeduction": 6510},
-            ]
-        }
+    @app.route("/deduction_categories", methods=['GET'])
+    def get_deduction_categories():
+        return deduction_categories
 
     @app.route("/deductions", methods=['GET'])
     def deductions():
-        return {
-            "categories": [
-                {
-                    "name": "Ausbildung",
-                    "maxDeduction": 12000,
-                    "currentDeduction": 8041,
-                    "entries":
-                    [
-                        {
-                            "name": "Kosten Uni",
-                            "value": 10000,
-                        },
-                        {
-                            "name": "Buch XY",
-                            "value": 41
-                        }
-                    ]
-                },
-                {
-                    "name": "Kinder",
-                    "currentDeduction": 3000
-                },
-                {
-                    "name": "3a",
-                    "maxDeduction": 6590,
-                    "currentDeduction": 2340,
-                    "entries":
-                    [
-                        {
-                            "name": "Fondsparplan",
-                            "value": 1000,
-                        },
-                        {
-                            "name": "Sparkonto",
-                            "value": 1340,
-                        }
-                    ]
-                },
-            ]
-        }
+        dedus = deepcopy(deduction_categories)
+        for ded in dedus["categories"]:
+            ded["entries"] = []
+            ded["currentDeduction"] = 0
+        entries = current_app.mongo.db.taxinfo.find({'user': 0})
+        for entry in entries:
+            e = entry["entry"]
+            entry_type = e["type"]
+            if entry_type == "bill":
+                for marker in e["content"]:
+                    if marker["name"] == "amount":
+                        for cat in dedus["categories"]:
+                            if "deductionCategory" in e.keys():
+                                if cat["type"] == e["deductionCategory"]:
+                                    cat["entries"].append({"name": e["file"], "value": marker["value"]})
+                                    cat["currentDeduction"]+= marker["value"]
+        return dedus
 
     @app.route("/calculate-taxes")
     def calculate_taxes():
