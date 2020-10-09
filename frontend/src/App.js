@@ -8,6 +8,9 @@ import {
 import { Home } from './pages/Home';
 import { Penis } from './pages/Penis';
 import { ToggleButton } from "./components/ToggleButton";
+import {Jumbo} from "./components/Jumbo";
+import {Upload} from "./components/Upload";
+import {AddButton} from "./components/AddButton";
 
 
 function App() {
@@ -24,6 +27,7 @@ function App() {
             </li>
           </ul>
         </nav>
+        <Jumbo></Jumbo>
         <ToggleButton></ToggleButton>
         <Switch>
           <Route path="/penis">
@@ -33,6 +37,7 @@ function App() {
             <Home />
           </Route>
         </Switch>
+        <AddButton></AddButton>
       </div>
     </Router>
   );
