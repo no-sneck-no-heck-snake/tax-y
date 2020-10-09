@@ -4,7 +4,11 @@ import { useFetch } from "use-http";
 import { Grid } from "@material-ui/core";
 import { DashboardCardSkeleton } from "../components/DashboardCardSkeleton";
 import { SummaryEntry } from "../components/SummaryEntry";
-import { SavingProgress } from "../components/SavingProgress";
+import { Card, CardContent, Typography, Box, Hidden } from "@material-ui/core";
+import { DeductionCategory } from "../components/DeductionCategory";
+import { DeductionChart } from "../components/DeductionChart";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 {
   /* <Grid container spacing={3}>
@@ -32,56 +36,87 @@ export function Home() {
     error,
     data = { capital: [], deductions: [], income: [] },
   } = useFetch("/info", { method: "GET" }, []);
+  const deductions = useFetch("/deductions", { method: "GET" }, []);
 
-  let value;
-  let maxDeduction;
-
-  if (data.deductions.length > 1) {
-    value = data.deductions.map((d) => d.value).reduce((a, b) => a + b, 0);
-    maxDeduction = data.deductions
-      .map((d) => d.maxDeduction)
-      .reduce((a, b) => a + b, 0);
+  if (error) {
+    return (
+      <Typography
+        variant="h2"
+        style={{
+          textAlign: "center",
+          color: "rgba(0,0,0,0.5)",
+          paddingTop: "64px",
+          fontWeight: 200,
+        }}
+      >
+        <FontAwesomeIcon color="red" icon={faExclamationCircle} />
+        <br />
+        Benjamin went wrong :(
+      </Typography>
+    );
   }
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12} md={4}>
-        <SummaryCard background="#FB3B7F" title="Einkünfte">
-          {loading ? (
-            <DashboardCardSkeleton />
-          ) : (
-            data.income.map((d) => <SummaryEntry item={d} />)
-          )}
-        </SummaryCard>
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <SummaryCard background="rgb(243, 171, 62)" title="Vermögen">
-          {loading ? (
-            <DashboardCardSkeleton />
-          ) : (
-            data.capital.map((d) => <SummaryEntry item={d} />)
-          )}
-        </SummaryCard>
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <SummaryCard
-          background="#4452FB"
-          title="Abzüge"
-          progress={
-            data.deductions.length > 1 ? (
-              <SavingProgress value={value} potential={maxDeduction} />
+    <>
+      <Card>
+        <CardContent>
+          <Typography gutterBottom={true} variant="h3">
+            Abzüge
+          </Typography>
+          <Grid container spacing={2}>
+            <Box clone order={{ xs: 2, md: 1 }}>
+              <Grid item xs={12} md={6}>
+                {deductions.loading ? (
+                  <DashboardCardSkeleton />
+                ) : (
+                  (deductions.data.categories || []).map((c) => (
+                    <DeductionCategory category={c}></DeductionCategory>
+                  ))
+                )}
+              </Grid>
+            </Box>
+            <Box clone order={{ xs: 1, md: 2 }}>
+              <Grid
+                item
+                xs={12}
+                md={6}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                {deductions.loading ? (
+                  <></>
+                ) : (
+                  <>
+                    <Hidden mdDown>
+                      <span style={{ flexGrow: "1" }}></span>
+                    </Hidden>
+                    <DeductionChart data={deductions.data}></DeductionChart>
+                  </>
+                )}
+              </Grid>
+            </Box>
+          </Grid>
+        </CardContent>
+      </Card>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <SummaryCard background="#FB3B7F" title="Einkünfte">
+            {loading ? (
+              <DashboardCardSkeleton />
             ) : (
-              <></>
-            )
-          }
-        >
-          {loading ? (
-            <DashboardCardSkeleton />
-          ) : (
-            data.deductions.map((d) => <SummaryEntry item={d} />)
-          )}
-        </SummaryCard>
+              data.income.map((d) => <SummaryEntry item={d} />)
+            )}
+          </SummaryCard>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <SummaryCard background="rgb(243, 171, 62)" title="Vermögen">
+            {loading ? (
+              <DashboardCardSkeleton />
+            ) : (
+              data.capital.map((d) => <SummaryEntry item={d} />)
+            )}
+          </SummaryCard>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 }

@@ -29,16 +29,6 @@ export function Navigation() {
           <img src="/logo.svg" />
         </Link>
         <Spacer />
-        <NavItem to="/">
-          <Button color="primary" disableElevation>
-            Dashboard
-          </Button>
-        </NavItem>
-        <NavItem to="/detail/deduction">
-          <Button color="primary" disableElevation>
-            Meine Abzüge
-          </Button>
-        </NavItem>
       </NavContent>
     </Nav>
   );
