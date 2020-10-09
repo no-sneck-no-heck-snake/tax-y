@@ -13,7 +13,7 @@ export function AccountDetail() {
   return (
     <Card>
       <CardContent>
-        <Typography gutterBottom={true} variant="h3">
+        <Typography gutterBottom={true} variant="h6">
           Abzüge
         </Typography>
         {data.categories.map((c) => (

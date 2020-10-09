@@ -60,7 +60,7 @@ export function Home() {
     <>
       <Card>
         <CardContent>
-          <Typography gutterBottom={true} variant="h3">
+          <Typography gutterBottom={true} variant="h5">
             Abzüge
           </Typography>
           <Grid container spacing={2}>

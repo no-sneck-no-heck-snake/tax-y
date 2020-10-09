@@ -30,18 +30,17 @@ export function DeductionChart({ data }) {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={250}>
+    <ResponsiveContainer width="80%" height={250}>
       <PieChart
-        margin={{ top: -80, left: 0, bottom: 0, right: 0 }}
-        width={400}
-        height={400}
+        width={300}
+        height={300}
       >
         <Pie
           data={categories}
           dataKey="value"
-          cx={200}
-          cy={200}
-          outerRadius={60}
+          cx={100}
+          cy={100}
+          outerRadius={30}
           fill="#8884d8"
         >
           {categories.map((entry, index) => (
@@ -51,10 +50,10 @@ export function DeductionChart({ data }) {
         <Pie
           data={categoriesOuterRadiant}
           dataKey="value"
-          cx={200}
-          cy={200}
-          innerRadius={70}
-          outerRadius={90}
+          cx={100}
+          cy={100}
+          innerRadius={35}
+          outerRadius={45}
           fill="#82ca9d"
           label
           cornerRadius={10}

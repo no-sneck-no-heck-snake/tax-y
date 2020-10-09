@@ -19,6 +19,7 @@ const DeductionEntryContent = styled.div`
   margin-bottom: 4px;
   padding: 8px 24px;
   display: flex;
+  padding-right: 0;
 `;
 
 const DeductionEntryContainer = styled.div`
@@ -42,8 +43,9 @@ function DeductionEntry({ entry }) {
   return (
     <DeductionEntryContainer>
       <DeductionEntryContent>
-        <span style={{ width: "216px", display: "block" }}>{entry.name}</span>
-        {formatFranks(entry.value)}
+        <span style={{ display: "block" }}>{entry.name}</span>
+        <span style={{ flexGrow: "1" }}></span>
+        <div style={{ whiteSpace: "nowrap" }}>{formatFranks(entry.value)}</div>
       </DeductionEntryContent>
     </DeductionEntryContainer>
   );
@@ -56,7 +58,7 @@ export function DeductionCategory({ category }) {
         <Typography
           gutterBottom={true}
           variant="h6"
-          style={{ width: "250px", color: category.color }}
+          style={{ color: category.color }}
         >
           <FontAwesomeIcon
             style={{
@@ -67,7 +69,8 @@ export function DeductionCategory({ category }) {
           />
           {category.displayName}
         </Typography>
-        <Typography variant="h6">
+        <span style={{ flexGrow: "1" }}></span>
+        <Typography variant="h6" noWrap={true}>
           {formatFranks(category.currentDeduction)}
         </Typography>
       </div>
