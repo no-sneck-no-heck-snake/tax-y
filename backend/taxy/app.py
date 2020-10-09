@@ -8,7 +8,7 @@ from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
 from pdf2image import convert_from_path, convert_from_bytes
 from flask_cors import CORS
-
+from pymongo import ReturnDocument
 from uuid import uuid4
 from werkzeug.utils import secure_filename
 
@@ -84,15 +84,15 @@ def make_app():
 
         return {"content": result}, HTTPStatus.CREATED
 
-    @app.route("/entry/<ObjectId:id_str>", methods=['GET'])
-    def entry(id_str):
-        entry = current_app.mongo.db.taxinfo.find_one()
-        # entry = current_app.mongo.db.taxinfo.find_one({'_id': id_str})
+    @app.route("/entry/<ObjectId:object_id>", methods=['GET'])
+    def entry(object_id):
+        entry = current_app.mongo.db.taxinfo.find_one({'_id': object_id})
         return entry["entry"]
 
-    @app.route("/entry/<id>", methods=['PUT'])
-    def update_entry():
-        return {"status": "ok!"}
+    @app.route("/entry/<ObjectId:object_id>", methods=['PUT'])
+    def update_entry(object_id):
+        response = current_app.mongo.db.taxinfo.update({'_id': object_id}, {"$set":{'entry':request.get_json()}})
+        return response
 
     @app.route("/info", methods=['GET'])
     def info():
