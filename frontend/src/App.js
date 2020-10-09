@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Penis } from "./pages/Penis";
 import { ToggleButton } from "./components/ToggleButton";
+import {Jumbo} from "./components/Jumbo";
+import {Upload} from "./components/Upload";
+import {AddButton} from "./components/AddButton";
 import { ThemeProvider } from "@material-ui/core";
 import { createGlobalStyle } from "styled-components";
 import { theme } from "./Theme";
@@ -32,6 +35,7 @@ function App() {
                 </li>
               </ul>
             </nav>
+            <Jumbo></Jumbo>
             <ToggleButton></ToggleButton>
             <Switch>
               <Route path="/penis">
@@ -41,6 +45,7 @@ function App() {
                 <Home />
               </Route>
             </Switch>
+            <AddButton></AddButton>
           </div>
         </Router>
       </ThemeProvider>
