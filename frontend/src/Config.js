@@ -11,7 +11,17 @@ export const DOCUMENT_TYPES = [
                 label: "Betrag",
                 name: "amount",
                 type: "number"
-            }
+						},
+						{
+							label: "Jahr",
+							name: "year",
+							type: "number"
+						},
+						{
+							label: "Zinsen",
+							name: "interest",
+							type: "number"
+						}
         ],
     },
     {
