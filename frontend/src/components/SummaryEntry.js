@@ -12,11 +12,11 @@ const ItemContent = styled(Grid)`
 
 export function SummaryEntry({ item }) {
   let value = <></>;
-  if (item.potential) {
+  if (item.maxDeduction) {
     value = (
       <SavingProgress
         value={item.value}
-        potential={item.potential}
+        potential={item.maxDeduction}
       ></SavingProgress>
     );
   } else {

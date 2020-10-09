@@ -34,23 +34,12 @@ export function Home() {
   } = useFetch("/info", { method: "GET" }, []);
 
   let value;
-  let potential;
-
-  if (!loading) {
-    data.deductions = data.deductions = [
-      {
-        name: "Studienkosten",
-        value: 1200,
-        potential: 10000,
-      },
-      { name: "Puffkosten", value: 400, potential: 1500 },
-    ];
-  }
+  let maxDeduction;
 
   if (data.deductions.length > 1) {
     value = data.deductions.map((d) => d.value).reduce((a, b) => a + b, 0);
-    potential = data.deductions
-      .map((d) => d.potential)
+    maxDeduction = data.deductions
+      .map((d) => d.maxDeduction)
       .reduce((a, b) => a + b, 0);
   }
 
@@ -80,7 +69,7 @@ export function Home() {
           title="Abzüge"
           progress={
             data.deductions.length > 1 ? (
-              <SavingProgress value={value} potential={potential} />
+              <SavingProgress value={value} potential={maxDeduction} />
             ) : (
               <></>
             )

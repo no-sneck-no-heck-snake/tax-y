@@ -45,6 +45,9 @@ function App() {
                   <Route path="/">
                     <Home />
                   </Route>
+                  <Route path="/detail/deduction">
+                
+                  </Route>
                 </Switch>
                 <ImportFile></ImportFile>
               </Content>
