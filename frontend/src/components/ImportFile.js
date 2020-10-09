@@ -75,9 +75,7 @@ export function ImportFile() {
         let id = await post('', data)
         
         if (response.ok) {
-            console.log(id);
-            id = id.$oid;
-            await get('../entry/' + id.$oid)
+            await post('../entry/' + id.id['$oid'])
         }
     }
 
