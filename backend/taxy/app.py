@@ -12,6 +12,8 @@ from werkzeug.utils import secure_filename
 from taxy.document_analyzer import scan_document
 from taxy.errors import ApiError
 
+from PIL import Image
+
 def make_app():
     app = Flask(__name__)
     #app.url_map.strict_slashes = False
@@ -46,7 +48,19 @@ def make_app():
         return {"content": result}, HTTPStatus.CREATED
 
     @app.route("/dummyImage", methods=['GET'])
-    def dummyImage():
+    def dummy_image():
+        width, height = Image.open("taxy/static/Lohn_Lohnausweis.jpg").size
+        return {"image": "static/Lohn_Lohnausweis.jpg",
+                "height": height,
+                "width": width,
+                "highlights": [
+                    {"x": 0, "y": 0, "height": 100, "width": 100, "name": "💩", "id": "1"},
+                    {"x": 169, "y": 242, "height": 69, "width": 96, "name": "No heck No Sneck! 🐍", "id": "2"},
+                ]
+                }
+
+    @app.route("/info", methods=['GET'])
+    def info():
         return {"image":"static/Lohn_Lohnausweis.jpg",
         "highlights":[
                 {"x":0,"y":0,"height":100,"width":100, "name": "💩", "id":"1"},
@@ -55,6 +69,6 @@ def make_app():
               }
 
     @app.route('/static/<path:path>')
-    def send_js(path):
+    def send_static(path):
         return send_from_directory('static', path)
     return app
