@@ -71,12 +71,28 @@ def __bill_data_extractor(content):
     match = float(original_match.replace("'", ""))
     return match, original_match
 
+def __iban_extractor(content):
+    m = re.compile(r"(CH\d{2}\s\d{4}\s\d{4}\s\d{4}\s\d{4}\s\d)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0]
+    return m, m.split(" ")[0]
+
 
 def __get_product_match(content):
     nlp = spacy.load("de_core_news_md")
     doc = nlp(content)
 
-    print([(X, X.ent_iob_, X.ent_type_) for X in doc])
+    # Analyze syntax
+    print("Noun phrases:", [chunk.text for chunk in doc.noun_chunks])
+    print("Verbs:", [token.lemma_ for token in doc if token.pos_ == "VERB"])
+
+    # Find named entities, phrases and concepts
+    comp = []
+    for entity in doc.ents:
+        print(entity.text, entity.label_)
+        if entity.label_ == "ORG":
+            comp.append(entity.text)
+
+    #print([(X, X.ent_iob_, X.ent_type_) for X in doc])
+    print(comp)
     return "asdfsdf"
 
 DOCUMENT_DATA_EXTRACTOR = {
@@ -86,12 +102,12 @@ DOCUMENT_DATA_EXTRACTOR = {
     DocumentType.INTEREST_STATEMENT: lambda content, indexes: [
         __get_match(content, indexes, "amount", __interest_amount_data_extractor),
         __get_match(content, indexes, "interest", __interest_data_extractor),
-        __get_match(content, indexes, "year", __year_data_extractor)
+        __get_match(content, indexes, "year", __year_data_extractor),
+        __get_match(content, indexes, "iban", __iban_extractor)
     ],
     #DocumentType.INSURACNCE_STATMENT = 3
     DocumentType.BILL: lambda content, indexes: [
-        __get_match(content, indexes, "amount", __bill_data_extractor),
-        __get_product_match(content)
+        __get_match(content, indexes, "amount", __bill_data_extractor)
     ]
 }
 
@@ -100,6 +116,8 @@ def classify_document(document_content, indexes):
     """
     Classifies what a the type of an upploaded document is
     """
+    __get_product_match(document_content)
+
     for classifyer in DOCUMENT_CLASSIFYER:
         if DOCUMENT_CLASSIFYER[classifyer](document_content):
             result = (classifyer.value, DOCUMENT_DATA_EXTRACTOR[classifyer](document_content, indexes))

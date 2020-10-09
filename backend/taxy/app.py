@@ -108,9 +108,8 @@ def make_app():
         response = current_app.mongo.db.taxinfo.update({'_id': object_id}, {"$set": {'entry': request.get_json()}})
         return response
 
-    @app.route("/info", methods=['GET'])
-    def info():
-        entries = current_app.mongo.db.taxinfo.find({'user': 0})
+    def __get_entry_info(user_session):
+        entries = current_app.mongo.db.taxinfo.find({'user':user_session})
         deductions = []
         income = []
         total_income = 0
@@ -145,6 +144,12 @@ def make_app():
     def get_deduction_categories():
         return deduction_categories
 
+    @app.route("/info", methods=['GET'])
+    def info():
+        user_session = request.cookies.get('_taxy_session', 0)
+
+        return __get_entry_info(user_session)
+
     @app.route("/deductions", methods=['GET'])
     def deductions():
         dedus = deepcopy(deduction_categories)
@@ -167,10 +172,15 @@ def make_app():
 
     @app.route("/calculate-taxes")
     def calculate_taxes():
+        user_session = request.cookies.get('_taxy_session', 0)
+
+        infos = __get_entry_info(user_session)
 
         #data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":24,"RevenueType1":1,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
-        data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":1,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
-        data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":2,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
+        #data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":1,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
+
+        data = f'{{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":2,"Revenue1":{infos["total_income"]},"Fortune":{infos["total_capital"]},"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}}'
+        print(data)
         request_url = "https://swisstaxcalculator.estv.admin.ch/delegate/ost-integration/v1/lg-proxy/operation/c3b67379_ESTV/API_calculateDetailedTaxes"
         resp = requests.post(request_url, data=data, headers={"Content-Type": "application/json"})
         if not resp.ok:
@@ -178,6 +188,7 @@ def make_app():
             return {"message": "Could not calculate taxes"}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         json_resp = resp.json()["response"]
+        print(json_resp)
         canton = json_resp["IncomeTaxCanton"]
         city = json_resp["IncomeTaxCity"]
         fed = json_resp["IncomeTaxFed"]
