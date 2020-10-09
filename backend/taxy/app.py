@@ -153,7 +153,7 @@ def make_app():
                 },
                 {
                     "name": "Kinder",
-                    "currentDeduction": 1000
+                    "currentDeduction": 3000
                 },
                 {
                     "name": "3a",
