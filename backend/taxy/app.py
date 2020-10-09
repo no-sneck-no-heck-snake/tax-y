@@ -107,6 +107,18 @@ def make_app():
                 for marker in e["content"]:
                     if marker["name"] == "amount":
                         income.append({"name": e["file"], "value": marker["value"]})
+
+            elif entry_type == "bill":
+                for marker in e["content"]:
+                    if marker["name"] == "amount":
+                        deductions.append({"name": e["file"], "value": marker["value"]})   
+
+            elif entry_type == "interest_statement":
+                for marker in e["content"]:
+                    if marker["name"] == "amount":
+                        capital.append({"name": e["file"], "value": marker["value"]})    
+                    if marker["name"] == "intrests":
+                        income.append({"name": e["file"], "value": marker["value"]})
         return {
             "deductions": deductions,
             "income": income,
@@ -143,7 +155,7 @@ def make_app():
                     "name": "Kinder",
                     "currentDeduction": 1000
                 },
-                                {
+                {
                     "name": "3a",
                     "maxDeduction": 6590,
                     "currentDeduction": 2340,
