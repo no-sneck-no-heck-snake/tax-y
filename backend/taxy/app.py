@@ -14,6 +14,7 @@ from taxy.errors import ApiError
 
 from PIL import Image
 
+
 def make_app():
     app = Flask(__name__)
     #app.url_map.strict_slashes = False
@@ -61,12 +62,11 @@ def make_app():
 
     @app.route("/info", methods=['GET'])
     def info():
-        return {"image":"static/Lohn_Lohnausweis.jpg",
-        "highlights":[
-                {"x":0,"y":0,"height":100,"width":100, "name": "💩", "id":"1"},
-                {"x":169,"y":242,"height":69,"width":96, "name": "No heck No Sneck! 🐍", "id":"2"},
-        ]
-              }
+        return {
+            "deductions": [{"name": "Studienkosten", "value": 1200}],
+            "income": [{"name": "Lohn", "value": 10000}, {"name": "Zins Sparkonto", "value": 100}],
+            "capital": [{"name": "Sparkonto", "value": 69000}]
+        }
 
     @app.route('/static/<path:path>')
     def send_static(path):
