@@ -18,12 +18,12 @@ const StyledMediaViewer = styled(MediaViewer)`
   width: 100%;
 `;
 
-export function CreateEntry() { 
+export function EntryDetail() { 
 
   const [image, setImage] = useState(null)
   const { get, response, loading, error } = useFetch()
 
-  const [newEntry, setNewEntry] = useState({
+  const [taxEntry, setTaxEntry] = useState({
     documentType: "",
     value: 0
   });
@@ -46,27 +46,27 @@ export function CreateEntry() {
           </Card>
         </Grid>
         <Grid container item xs={6}>
-          <CreateEntryForm newEntry={newEntry} setNewEntry={setNewEntry}></CreateEntryForm>
+          <CreateEntryForm taxEntry={taxEntry} setTaxEntry={setTaxEntry}></CreateEntryForm>
         </Grid>
       </Grid>
   }
   </>;
 }
 
-function CreateEntryForm({ setNewEntry, newEntry }) {
+function CreateEntryForm({ setTaxEntry, taxEntry }) {
 
   const { put, response, loading, error } = useFetch()
 
   const handleChange = (event) => {
     const name = event.target.name;
-    setNewEntry({
-      ...newEntry,
+    setTaxEntry({
+      ...taxEntry,
       [name]: event.target.value,
     });
   };
 
   async function updateEntry() {
-    const updatedEntry = await put('/entry/1', newEntry)
+    const updatedEntry = await put('/entry/1', taxEntry)
   }
 
   return <BottomActionsCard style={{width: "100%"}}>
@@ -77,7 +77,7 @@ function CreateEntryForm({ setNewEntry, newEntry }) {
           <InputLabel htmlFor="outlined-documentType">Dokumentart</InputLabel>
           <Select
             native
-            value={newEntry.documentType}
+            value={taxEntry.documentType}
             onChange={handleChange}
             label="Dokumentart"
             inputProps={{
@@ -102,7 +102,7 @@ function CreateEntryForm({ setNewEntry, newEntry }) {
               shrink: true,
             }}
             name="value"
-            value={newEntry.value} onChange={handleChange}
+            value={taxEntry.value} onChange={handleChange}
             variant="outlined"
           />
         </FormControl>
