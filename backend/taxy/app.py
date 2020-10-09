@@ -6,7 +6,7 @@ from http import HTTPStatus
 from flask import Flask, jsonify, request, current_app
 from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
-from pdf2image import convert_from_path
+from pdf2image import convert_from_path, convert_from_bytes
 from flask_cors import CORS
 
 from uuid import uuid4
@@ -46,10 +46,13 @@ def make_app():
         # ensure directory for the uploaded doc exists
         base_path.mkdir(parents=True, exist_ok=True)
 
-        if uploaded_file.filename.suffix == ".pdf":
-            some_image = convert_from_path(str(uploaded_file.filename))[0]
+        #target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
+        #uploaded_file.save(str(target_file))
+
+        if Path(uploaded_file.filename).suffix == ".pdf":
+            some_image = convert_from_bytes(uploaded_file.read())[0]
             target_file = base_path / (str(uuid4()) + ".jpg")
-            some_image.save(target_file, 'JPEG')
+            some_image.save(str(target_file), 'JPEG')
         else:
             target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
             uploaded_file.save(str(target_file))
@@ -59,17 +62,21 @@ def make_app():
 
         print(f'Saved file at: {target_file}')
         if not current_app.mongo.db.users.find_one({"_id": user_session}):
-            current_app.mongo.db.users.insert({"_id": user_session})
+            if int(user_session) == 0:
+                traits = ["student", "with_children", "married", "senior"] 
+            current_app.mongo.db.users.insert({
+                "_id": user_session, "traits": traits
+            })
 
         width, height = Image.open(str(target_file)).size
 
         current_app.mongo.db.taxinfo.insert({
             "user": user_session,
-            "file":  str(target_file),
-            "width": width,
-            "height": height,
             "entry":
             {
+                "file":  str(target_file),
+                "width": width,
+                "height": height,
                 "type": result[0],
                 "content": result[1]
             }
@@ -79,17 +86,9 @@ def make_app():
 
     @app.route("/entry/<ObjectId:id_str>", methods=['GET'])
     def entry(id_str):
-        entry = current_app.mongo.db.taxinfo.find_one({'_id': id_str})
-        print(entry)
-        return entry["wage_card"]
-        return {"image": "static/Lohn_Lohnausweis.jpg",
-                "height": 1,
-                "width": 2,
-                "highlights": [
-                    {"x": 0, "y": 0, "height": 100, "width": 100, "name": "💩", "id": "1"},
-                    {"x": 169, "y": 242, "height": 69, "width": 96, "name": "No heck No Sneck! 🐍", "id": "2"},
-                ]
-                }
+        entry = current_app.mongo.db.taxinfo.find_one()
+        # entry = current_app.mongo.db.taxinfo.find_one({'_id': id_str})
+        return entry["entry"]
 
     @app.route("/entry/<id>", methods=['PUT'])
     def update_entry():
