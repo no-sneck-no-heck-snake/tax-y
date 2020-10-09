@@ -4,6 +4,7 @@ from pathlib import Path
 from http import HTTPStatus
 
 from flask import Flask, jsonify, request, current_app
+from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
 
 from werkzeug.utils import secure_filename
@@ -44,4 +45,16 @@ def make_app():
 
         return {"content": result}, HTTPStatus.CREATED
 
+    @app.route("/dummyImage", methods=['GET'])
+    def dummyImage():
+        return {"image":"static/Lohn_Lohnausweis.jpg",
+        "highlights":[
+                {"x":0,"y":0,"height":100,"width":100, "name": "💩", "id":"1"},
+                {"x":169,"y":242,"height":69,"width":96, "name": "No heck No Sneck! 🐍", "id":"2"},
+        ]
+              }
+
+    @app.route('/static/<path:path>')
+    def send_js(path):
+        return send_from_directory('static', path)
     return app
