@@ -22,7 +22,7 @@ const Highlight = styled.div`
 export function MediaViewer({ src, highlights }) {
   return (
     <MediaContainer>
-        <img src={src}></img>
+        <img style={{ width: "100%"}} src={src}></img>
         <HighlightContainer>
           { highlights.map(h => <Highlight style={{ 
             top: `${h.y}px`, 
