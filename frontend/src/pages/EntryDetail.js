@@ -175,7 +175,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
       onClick={(e) => updateEntry()}
       startIcon={<Save />}
     >
-      Save
+      Speichern
     </Button>
   </CardActions>
 </BottomActionsCard>
