@@ -22,16 +22,16 @@ const Highlight = styled.div`
   background-color: rgba(3, 152, 252, 0.5);
 `; 
 
-export function MediaViewer({ image }) {
+export function MediaViewer({ taxEntry }) {
   return (
     <MediaContainer>
-        <img style={{ width: "100%"}} src={ BASE_URI + "/" + image.image}></img>
+        <img style={{ width: "100%"}} src={ BASE_URI + "/" + taxEntry.file}></img>
         <HighlightContainer>
-          { image.content.map(h => <Tooltip key={h.id} title={h.name}><Highlight style={{ 
-            top: `${(100 / image.height) * h.height}%`, 
-            left: `${(100 / image.width) * h.x}%`,
-            height: `${(100 / image.height) * h.height}%`,
-            width: `${(100 / image.width) * h.width}%`,
+          { taxEntry.content.map(h => <Tooltip key={h.name} title={`${h.name}:${h.value}`}><Highlight style={{ 
+            top: `${(100 / taxEntry.height) * (h.top - 5)}%`, 
+            left: `${(100 / taxEntry.width) * (h.left - 5)}%`,
+            height: `${(100 / taxEntry.height) * h.height}%`,
+            width: `${(100 / taxEntry.width) * h.width}%`,
           }}></Highlight></Tooltip>) }
         </HighlightContainer>
     </MediaContainer>

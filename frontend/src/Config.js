@@ -4,19 +4,19 @@ export const BASE_URI = "http://10.10.1.123:5000"
 
 export const DOCUMENT_TYPES = [
     {
-        name: "capital",
-        label: "Vermögen",
+        name: "interest_statement",
+        label: "Vermögensausweis",
         fields: [
             {
                 label: "Betrag",
-                name: "value",
+                name: "amount",
                 type: "number"
             }
         ],
     },
     {
-        name: "deductions",
-        label: "Abzüge",
+        name: "wage_card",
+        label: "Lohnausweis",
         fields: [
             {
                 label: "Betrag",
@@ -26,8 +26,8 @@ export const DOCUMENT_TYPES = [
         ]
     },
     {
-        name: "income",
-        label: "Einkommen",
+        name: "bill",
+        label: "Rechnung",
         fields: [
             {
                 label: "Betrag",

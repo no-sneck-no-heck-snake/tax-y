@@ -24,26 +24,25 @@ export function EntryDetail() {
 
   const { entryId } = useParams();
 
-  const [image, setImage] = useState(null)
   const { get, response, loading, error } = useFetch()
 
   const [taxEntry, setTaxEntry] = useState({
-    documentType: "",
+    type: "",
+    content: []
   });
 
   useEffect(() => { loadImage() }, []) // componentDidMount
 
   async function loadImage() {
     console.log(entryId)
-    const initialImage = await get("/entry/" + entryId)
-    if (response.ok) setImage(initialImage)
-    setImage({  })
+    const entry = await get("/entry/" + entryId)
+    if (response.ok) setTaxEntry(entry)
   }
 
   return <>
-    {error && `Error! ${JSON.stringify(error)}`}
-    {loading && 'Loading...'}
-    { image &&
+    { error && `Error! ${JSON.stringify(error)}`}
+    { loading && 'Loading...'}
+    { (!error && taxEntry) &&
       <Grid container spacing={4}>
         {/* <Grid container item>
           <Button color="primary" component={Link} to="/">Back</Button>
@@ -51,7 +50,7 @@ export function EntryDetail() {
         <Grid container item xs={6}>
           <Card>
             <StyledMediaViewer
-                image={image}>
+                taxEntry={taxEntry}>
               </StyledMediaViewer>
           </Card>
         </Grid>
@@ -107,7 +106,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
   }
 
   function getEntryValue(name) {
-    const field = taxEntry.fields.find(f => f.name === name);
+    const field = taxEntry.content.find(f => f.name === name);
     return field ? field.value : "";
   }
 
@@ -119,11 +118,11 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
           <InputLabel htmlFor="outlined-documentType">Dokumentart</InputLabel>
           <Select
             native
-            value={taxEntry.documentType}
+            value={taxEntry.type}
             onChange={handleTypeChange}
             label="Dokumentart"
             inputProps={{
-              name: 'documentType',
+              name: 'type',
               id: 'outlined-documentType',
             }}
           >
