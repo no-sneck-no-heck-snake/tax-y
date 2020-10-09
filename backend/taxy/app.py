@@ -6,6 +6,7 @@ from http import HTTPStatus
 from flask import Flask, jsonify, request, current_app
 from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
+from flask_cors import CORS
 
 from werkzeug.utils import secure_filename
 
@@ -17,6 +18,7 @@ from PIL import Image
 
 def make_app():
     app = Flask(__name__)
+    CORS(app)
     #app.url_map.strict_slashes = False
     app.debug = True
     app.host = "0.0.0.0"

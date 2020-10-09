@@ -13,19 +13,26 @@ class DocumentType(Enum):
 
 DOCUMENT_CLASSIFYER = {
     DocumentType.WAGE_CARD: lambda content: "lohnausweis" in content.lower(),
-    DocumentType.INTEREST_STATEMENT: lambda content: "zins" in content.lower() and "saldo" in content.lower()
-    #DocumentType.INSURACNCE_STATMENT = 3
-    #DocumentType.BILL = 4
+    DocumentType.INTEREST_STATEMENT: lambda content: "zins" in content.lower() and "saldo" in content.lower(),
+    DocumentType.INSURACNCE_STATMENT: lambda content: False,
+    DocumentType.BILL: lambda content: "rechnung" in content.lower()
 }
 
 DOCUMENT_DATA_EXTRACTOR = {
-    DocumentType.WAGE_CARD: lambda content: int(re.compile(r"nettolohn(.|\n)*?((\d|')+)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].replace("'", "")),
-    DocumentType.INTEREST_STATEMENT: lambda content: (
-        float(re.compile(r"saldo(.|\n)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].replace("'", "")),
-        float(re.compile(r"habenzins(.|\n)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].replace("'", ""))
-    )
+    DocumentType.WAGE_CARD: lambda content: {
+        "amount": int(re.compile(r"nettolohn(.|\n)*?((\d|')+)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].replace("'", "")),
+    },
+    DocumentType.INTEREST_STATEMENT: lambda content: {
+        # match the saldo
+        "amount": float(re.compile(r"saldo(.|\n)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].replace("'", "")),
+        # match the zins
+        "interest": float(re.compile(r"habenzins(.|\n)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].replace("'", "")),
+        "year": re.compile(r"31\.12\.(\d{2,4})", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0]
+    },
     #DocumentType.INSURACNCE_STATMENT = 3
-    #DocumentType.BILL = 4
+    DocumentType.BILL: lambda content: {
+        "amount": float(re.compile(r"(end|gesamt|schluss)betrag(.)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][2].replace("'", ""))
+    }
 }
 
 
