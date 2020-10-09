@@ -95,16 +95,11 @@ def classify_document(document_content, indexes):
             return result
 
 
-def scan_document(document_path):
-
-    if document_path.suffix == ".pdf":
-        images = convert_from_path(str(document_path))
-    else:
-        images = [Image.open(str(document_path))]
+def scan_document(image):
 
     # Simple image to string
-    text_result = "".join(pytesseract.image_to_string(image, lang='deu') for image in images)
-    indexes = pytesseract.image_to_data(images[0], lang="deu", output_type=pytesseract.Output.DICT)
+    text_result = pytesseract.image_to_string(image, lang='deu')
+    indexes = pytesseract.image_to_data(image, lang="deu", output_type=pytesseract.Output.DICT)
     #FIXME: ? text_result = " ".join(indexes["text"])
     print(" ".join(indexes["text"]))
     return classify_document(text_result, indexes)

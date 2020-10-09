@@ -53,11 +53,11 @@ def make_app():
         else:
             target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
             uploaded_file.save(str(target_file))
-            someImage = Image.open(str(uploaded_file.filename))
+            some_image = Image.open(str(uploaded_file.filename))
 
-        result = scan_document(someImage)
+        result = scan_document(some_image)
 
-        print(f'Saved file at:{target_file}')
+        print(f'Saved file at: {target_file}')
         if not current_app.mongo.db.users.find_one({"_id": user_session}):
             current_app.mongo.db.users.insert({"_id": user_session})
 
@@ -66,6 +66,8 @@ def make_app():
         current_app.mongo.db.taxinfo.insert({
             "user": user_session,
             "file":  str(target_file),
+            "width": width,
+            "height": height,
             "entry":
             {
                 "type": result[0],
