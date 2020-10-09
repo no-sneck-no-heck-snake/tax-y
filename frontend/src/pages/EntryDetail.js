@@ -5,6 +5,7 @@ import useFetch from 'use-http'
 import { Save } from "@material-ui/icons"
 import { MediaViewer } from "../components/MediaViewer"
 import { Grid, Card, FormControl, InputLabel, Select, TextField, Button, CardActions, CardContent } from "@material-ui/core"
+import { DOCUMENT_TYPES } from "../Config"
 
 const FormGridRow = styled(Grid)`
   padding: 10px 0px;
@@ -19,7 +20,7 @@ const StyledMediaViewer = styled(MediaViewer)`
   width: 100%;
 `;
 
-export function EntryDetail({  }) { 
+export function EntryDetail() { 
 
   const { entryId } = useParams();
 
@@ -28,17 +29,20 @@ export function EntryDetail({  }) {
 
   const [taxEntry, setTaxEntry] = useState({
     documentType: "",
-    value: 0
   });
 
   useEffect(() => { loadImage() }, []) // componentDidMount
 
   async function loadImage() {
+    console.log(entryId)
     const initialImage = await get("/entry/" + entryId)
     if (response.ok) setImage(initialImage)
+    setImage({  })
   }
 
   return <>
+    {error && `Error! ${JSON.stringify(error)}`}
+    {loading && 'Loading...'}
     { image &&
       <Grid container spacing={4}>
         {/* <Grid container item>
@@ -65,14 +69,46 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
 
   const handleChange = (event) => {
     const name = event.target.name;
-    setTaxEntry({
-      ...taxEntry,
-      [name]: event.target.value,
-    });
+    const fieldValue = event.target.value;
+
+    if (name === "type") {
+      setTaxEntry({
+        ...taxEntry,
+        [name]: fieldValue,
+      });
+    } else {
+
+      const fieldValues = taxEntry.content.map(c => ({ name: c.name, value: c.value }));
+      const val = fieldValues.find(v => v.name === name);
+      if (val) {
+        val.value = fieldValue
+      }
+  
+      setTaxEntry({
+        ...taxEntry,
+        ["content"]: fieldValues
+      });
+    }
+   
+  };
+
+  const [fields, setFields] = useState([])
+  const handleTypeChange = (event) => {
+    const type = DOCUMENT_TYPES.find(t => t.name === event.target.value);
+    if (type) {
+      setFields(type.fields);
+    }
+
+    handleChange(event);
   };
 
   async function updateEntry() {
     const updatedEntry = await put('/entry/1', taxEntry.id)
+  }
+
+  function getEntryValue(name) {
+    const field = taxEntry.fields.find(f => f.name === name);
+    return field ? field.value : "";
   }
 
   return <BottomActionsCard style={{width: "100%"}}>
@@ -84,7 +120,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
           <Select
             native
             value={taxEntry.documentType}
-            onChange={handleChange}
+            onChange={handleTypeChange}
             label="Dokumentart"
             inputProps={{
               name: 'documentType',
@@ -92,27 +128,25 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
             }}
           >
             <option aria-label="None" value="" />
-            <option value={"capital"}>Vermögen</option>
-            <option value={"deductions"}>Abzüge</option>
-            <option value={"income"}>Einkünfte</option>
+            { DOCUMENT_TYPES.map(type => <option value={type.name}>{type.label}</option>) }
           </Select>
         </FormControl>
       </FormGridRow>
-      <FormGridRow container item xs={12}>
+      { fields.map(field => <FormGridRow container item xs={12}>
         <FormControl fullWidth={true}>
           <TextField
-            id="filled-number"
-            label="Betrag"
-            type="number"
+            label={field.label}
+            type={field.type}
             InputLabelProps={{
               shrink: true,
             }}
-            name="value"
-            value={taxEntry.value} onChange={handleChange}
+            name={field.name}
+            value={getEntryValue(field.name)} 
+            onChange={handleChange}
             variant="outlined"
           />
         </FormControl>
-      </FormGridRow>
+      </FormGridRow>) }
     </Grid>
   </CardContent>
   <CardActions style={{ justifyContent: 'flex-end' }}>
