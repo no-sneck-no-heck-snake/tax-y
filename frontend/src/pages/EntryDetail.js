@@ -28,13 +28,13 @@ export function EntryDetail() {
     content: []
   });
 
-  useEffect(() => { loadImage() }, []) // componentDidMount
+  useEffect(() => { loadEntry() }, []) // componentDidMount
 
-  async function loadImage() {
-    console.log(entryId)
+  async function loadEntry() {
     const entry = await get("/entry/" + entryId)
     if (response.ok) {
-       setTaxEntry(entry);
+      entry.id = entryId;
+      setTaxEntry(entry);
     }
   }
 
@@ -107,7 +107,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
   }
 
   async function updateEntry() {
-    const updatedEntry = await put('/entry/1', taxEntry.id)
+    const updatedEntry = await put('/entry/' + taxEntry.id, taxEntry)
   }
 
   function getEntryValue(name) {
