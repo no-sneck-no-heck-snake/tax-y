@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Penis } from "./pages/Penis";
-import { AddButton } from "./components/AddButton";
+import { ImportFile } from "./components/ImportFile";
 import { ThemeProvider } from "@material-ui/core";
 import styled, { createGlobalStyle } from "styled-components";
 import { theme } from "./Theme";
@@ -44,8 +44,8 @@ function App() {
                   <Home />
                 </Route>
               </Switch>
+            <ImportFile></ImportFile>
             </Content>
-            <AddButton></AddButton>
           </div>
         </Router>
       </ThemeProvider>
