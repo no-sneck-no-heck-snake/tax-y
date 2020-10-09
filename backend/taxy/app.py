@@ -66,7 +66,7 @@ def make_app():
         current_app.mongo.db.taxinfo.insert({
             "user": user_session,
             "file":  str(target_file),
-            "entry": 
+            "entry":
             {
                 "type": result[0],
                 "content": result[1]
@@ -75,8 +75,11 @@ def make_app():
 
         return {"content": result}, HTTPStatus.CREATED
 
-    @app.route("/entry/<id>", methods=['GET'])
-    def entry(id):
+    @app.route("/entry/<ObjectId:id_str>", methods=['GET'])
+    def entry(id_str):
+        entry = current_app.mongo.db.taxinfo.find_one({'_id': id_str})
+        print(entry)
+        return entry["wage_card"]
         return {"image": "static/Lohn_Lohnausweis.jpg",
                 "height": 1,
                 "width": 2,
@@ -85,15 +88,16 @@ def make_app():
                     {"x": 169, "y": 242, "height": 69, "width": 96, "name": "No heck No Sneck! 🐍", "id": "2"},
                 ]
                 }
-                
-    @app.route("/entry/<id>", methods =['PUT'])
+
+    @app.route("/entry/<id>", methods=['PUT'])
     def update_entry():
-        return {"status":"ok!"}
+        return {"status": "ok!"}
 
     @app.route("/info", methods=['GET'])
     def info():
         return {
-            "deductions": [{"name": "Studienkosten", "value": 1200}],
+            "deductions": [{"name": "Studienkosten", "value": 1200, "maxDeduction": 12000},
+                           {"name": "Transport", "value": 69, "maxDeduction": 420}],
             "income": [{"name": "Lohn", "value": 10000}, {"name": "Zins Sparkonto", "value": 100}],
             "capital": [{"name": "Sparkonto", "value": 69000}]
         }
