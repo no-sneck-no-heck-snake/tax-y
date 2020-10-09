@@ -99,6 +99,8 @@ def make_app():
         entries = current_app.mongo.db.taxinfo.find({'user':0})
         deductions = []
         income = []
+        total_income = 0
+        total_capital = 0
         capital = []
         for entry in entries:
             e = entry["entry"]
@@ -119,16 +121,16 @@ def make_app():
                         capital.append({"name": e["file"], "value": marker["value"]})    
                     if marker["name"] == "intrests":
                         income.append({"name": e["file"], "value": marker["value"]})
+        for i in income:
+            total_income+= i["value"]
+        for c in capital:
+            total_capital += c["value"]
         return {
             "deductions": deductions,
             "income": income,
+            "total_income": total_income,
+            "total_capital": total_capital,
             "capital": capital
-        }
-        return {
-            "deductions": [{"name": "Studienkosten", "value": 1200, "maxDeduction": 12000},
-                           {"name": "Transport", "value": 69, "maxDeduction": 420}],
-            "income": [{"name": "Lohn", "value": 10000}, {"name": "Zins Sparkonto", "value": 100}],
-            "capital": [{"name": "Sparkonto", "value": 69000}]
         }
 
     @app.route("/deductions", methods=['GET'])
