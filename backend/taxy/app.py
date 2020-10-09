@@ -2,6 +2,8 @@ import os
 
 from pathlib import Path
 from http import HTTPStatus
+import requests
+from bson.json_util import dumps
 
 from flask import Flask, jsonify, request, current_app
 from flask.helpers import send_from_directory
@@ -63,14 +65,14 @@ def make_app():
         print(f'Saved file at: {target_file}')
         if not current_app.mongo.db.users.find_one({"_id": user_session}):
             if int(user_session) == 0:
-                traits = ["student", "with_children", "married", "senior"] 
+                traits = ["student", "with_children", "married", "senior"]
             current_app.mongo.db.users.insert({
                 "_id": user_session, "traits": traits
             })
 
         width, height = Image.open(str(target_file)).size
 
-        current_app.mongo.db.taxinfo.insert({
+        inserted_id = current_app.mongo.db.taxinfo.insert_one({
             "user": user_session,
             "entry":
             {
@@ -80,13 +82,14 @@ def make_app():
                 "type": result[0],
                 "content": result[1]
             }
-        })
+        }).inserted_id
 
-        return {"content": result}, HTTPStatus.CREATED
+        return dumps({"id": inserted_id}), HTTPStatus.CREATED
 
     @app.route("/entry/<ObjectId:object_id>", methods=['GET'])
     def entry(object_id):
         entry = current_app.mongo.db.taxinfo.find_one({'_id': object_id})
+        print(entry)
         return entry["entry"]
 
     @app.route("/entry/<ObjectId:object_id>", methods=['PUT'])
@@ -176,12 +179,37 @@ def make_app():
             ]
         }
 
+    @app.route("/calculate-taxes")
+    def calculate_taxes():
+
+        #data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":24,"RevenueType1":1,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
+        data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":1,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
+        data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":2,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
+        request_url = "https://swisstaxcalculator.estv.admin.ch/delegate/ost-integration/v1/lg-proxy/operation/c3b67379_ESTV/API_calculateDetailedTaxes"
+        resp = requests.post(request_url, data=data, headers={"Content-Type": "application/json"})
+        if not resp.ok:
+            print(resp.__dict__)
+            return {"message": "Could not calculate taxes"}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        json_resp = resp.json()["response"]
+        canton = json_resp["IncomeTaxCanton"]
+        city = json_resp["IncomeTaxCity"]
+        fed = json_resp["IncomeTaxFed"]
+
+        return {
+            "canton": canton,
+            "city": city,
+            "fed": fed,
+            "total": canton + city + fed
+        }
+
     @app.route('/static/<path:path>')
     def send_static(path):
         return send_from_directory('static', path)
 
+
     @app.route('/data/<path:path>')
     def send_data(path):
-        return send_from_directory(os.path.join('..','data'), path)
+        return send_from_directory('../data', path)
 
     return app
