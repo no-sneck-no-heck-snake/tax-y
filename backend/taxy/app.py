@@ -6,7 +6,7 @@ from http import HTTPStatus
 from flask import Flask, jsonify, request, current_app
 from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
-from pdf2image import convert_from_path
+from pdf2image import convert_from_path, convert_from_bytes
 from flask_cors import CORS
 
 from uuid import uuid4
@@ -46,10 +46,13 @@ def make_app():
         # ensure directory for the uploaded doc exists
         base_path.mkdir(parents=True, exist_ok=True)
 
-        if uploaded_file.filename.suffix == ".pdf":
-            some_image = convert_from_path(str(uploaded_file.filename))[0]
+        #target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
+        #uploaded_file.save(str(target_file))
+
+        if Path(uploaded_file.filename).suffix == ".pdf":
+            some_image = convert_from_bytes(uploaded_file.read())[0]
             target_file = base_path / (str(uuid4()) + ".jpg")
-            some_image.save(target_file, 'JPEG')
+            some_image.save(str(target_file), 'JPEG')
         else:
             target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
             uploaded_file.save(str(target_file))
@@ -59,7 +62,11 @@ def make_app():
 
         print(f'Saved file at: {target_file}')
         if not current_app.mongo.db.users.find_one({"_id": user_session}):
-            current_app.mongo.db.users.insert({"_id": user_session})
+            if int(user_session) == 0:
+                traits = ["student", "with_children", "married", "senior"] 
+            current_app.mongo.db.users.insert({
+                "_id": user_session, "traits": traits
+            })
 
         width, height = Image.open(str(target_file)).size
 
