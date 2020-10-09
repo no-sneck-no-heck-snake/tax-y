@@ -2,6 +2,7 @@ import os
 
 from pathlib import Path
 from http import HTTPStatus
+from random import random, randrange
 import requests
 from bson.json_util import dumps
 
@@ -81,7 +82,7 @@ def make_app():
             })
 
         width, height = Image.open(str(target_file)).size
-
+        category =  deduction_categories['categories'][randrange(start=0, stop=2)]["type"] #hack
         inserted_id = current_app.mongo.db.taxinfo.insert_one({
             "user": user_session,
             "entry":
@@ -91,7 +92,8 @@ def make_app():
                 "height": height,
                 "type": result[0],
                 "content": result[1]
-            }
+            },
+            "deductionCategory": category #hack
         }).inserted_id
 
         return dumps({"id": inserted_id}), HTTPStatus.CREATED
