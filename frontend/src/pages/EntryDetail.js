@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useHistory } from 'react-router-dom'
 import styled from "styled-components";
 import useFetch from 'use-http'
 import { Save } from "@material-ui/icons"
@@ -63,6 +63,7 @@ export function EntryDetail() {
 }
 
 function CreateEntryForm({ setTaxEntry, taxEntry }) {
+  let history = useHistory();
 
   const { put, response, loading, error } = useFetch()
   useEffect(() => {
@@ -119,6 +120,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
   async function updateEntry() {
     const updatedEntry = await put('/entry/' + taxEntry.id, taxEntry);
     setOpenSuccess(true);
+    history.push('/')
   }
 
   function getEntryValue(name) {
