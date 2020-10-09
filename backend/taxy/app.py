@@ -181,7 +181,7 @@ def make_app():
         #data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":24,"RevenueType1":1,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
         #data = '{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":1,"Revenue1":60000,"Fortune":150000,"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}'
 
-        data = f'{{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":2,"Revenue1":{infos["total_income"]},"Fortune":{infos["total_capital"]},"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}}'
+        data = f'{{"SimKey":null,"TaxYear":2019,"TaxLocationID":630000000,"Relationship":1,"Confession1":5,"Children":[],"Age1":25,"RevenueType1":2,"Revenue1":{infos["totalIncome"]},"Fortune":{infos["totalCapital"]},"Confession2":0,"Age2":0,"RevenueType2":0,"Revenue2":0,"Budget":[]}}'
         print(data)
         request_url = "https://swisstaxcalculator.estv.admin.ch/delegate/ost-integration/v1/lg-proxy/operation/c3b67379_ESTV/API_calculateDetailedTaxes"
         resp = requests.post(request_url, data=data, headers={"Content-Type": "application/json"})
