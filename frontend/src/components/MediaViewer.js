@@ -6,6 +6,8 @@ const MediaContainer = styled.div`
 `;
 
 const HighlightContainer = styled.div`
+  top: 0;
+  left: 0;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -17,12 +19,10 @@ const Highlight = styled.div`
   background-color: rgba(3, 152, 252, 0.5);
 `; 
 
-export function MediaViewer(props) {
-  const { src, highlights } = props;
-
+export function MediaViewer({ src, highlights }) {
   return (
     <MediaContainer>
-        <img src={{src}}></img>
+        <img src={src}></img>
         <HighlightContainer>
           { highlights.map(h => <Highlight style={{ 
             top: `${h.y}px`, 
