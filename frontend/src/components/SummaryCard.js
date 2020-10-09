@@ -32,9 +32,17 @@ export function SummaryCard({ title, background, children, progress }) {
             variant="h5"
             component="h2"
           >
-            {title}
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              {progress ? progress : <></>}
+            <div style={{ display: "flex" }}>
+              <div>{title}</div>
+              <div
+                style={{
+                  display: "flex",
+                  flexGrow: "1",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {progress ? progress : <></>}
+              </div>
             </div>
           </Typography>
           {/* <ItemContent container spacing={2}>

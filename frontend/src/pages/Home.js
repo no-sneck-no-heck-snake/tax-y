@@ -36,12 +36,22 @@ export function Home() {
   let value;
   let potential;
 
-  data.deductions = data.deductions.map((d) => ({ ...d, potential: 10000 }));
+  if (!loading) {
+    data.deductions = data.deductions = [
+      {
+        name: "Studienkosten",
+        value: 1200,
+        potential: 10000,
+      },
+      { name: "Puffkosten", value: 400, potential: 1500 },
+    ];
+  }
 
   if (data.deductions.length > 1) {
-    value = data.deductions.reduce((a, b) => a.value + b.value, 0);
-    potential = data.deductions.reduce((a, b) => a.potential + b.potential, 0);
-    console.log(data.deductions);
+    value = data.deductions.map((d) => d.value).reduce((a, b) => a + b, 0);
+    potential = data.deductions
+      .map((d) => d.potential)
+      .reduce((a, b) => a + b, 0);
   }
 
   return (

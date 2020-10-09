@@ -15,7 +15,13 @@ export function SavingProgress({ value, potential }) {
     strokeColor = "#4CAF50";
   }
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <div style={{ marginRight: "8px", fontSize: "12px" }}>
         {numeral(value).format("0,0") + " Fr."} /{" "}
         {numeral(potential).format("0,0") + " Fr."}
@@ -25,7 +31,7 @@ export function SavingProgress({ value, potential }) {
           strokeWidth="14"
           strokeColor={strokeColor}
           percent={percent}
-          trailColor="white"
+          trailColor="rgba(255,255,255,0.5)"
           trailWidth="14"
         ></Line>
       </div>
