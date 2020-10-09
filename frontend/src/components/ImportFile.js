@@ -1,10 +1,14 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload'; 
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import useFetch from "use-http";
+import { Redirect } from 'react-router-dom'
+
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -41,6 +45,7 @@ const actions = [
 ];
 
 export function ImportFile() {
+    const {get, post, response, loading, error} = useFetch('document')
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
 
@@ -53,8 +58,27 @@ export function ImportFile() {
     };
 
     const handleClick = () => {
-     var input = document.getElementById("doc-upload");
-     input.click()
+        let input = document.getElementById("doc-upload");
+        input.click()
+    }
+
+    const onChange = (event) => {
+        let file = event.target.files[0];
+        let data = new FormData()
+        data.append('file', file)
+        if (data instanceof FormData) {
+            sendData(data)
+        }
+    }
+
+    async function sendData(data) {
+        let id = await post('', data)
+        
+        if (response.ok) {
+            console.log(id);
+            id = id.$oid;
+            await get('../entry/' + id.$oid)
+        }
     }
 
     return (
@@ -77,7 +101,9 @@ export function ImportFile() {
                         />
                     ))}
                 </SpeedDial>
-                <input accept="image/*" className={classes.input}  id="doc-upload" type="file" />
+                <input accept="application/pdf,image/*" onChange={onChange} className={classes.input}
+                       id="doc-upload"
+                       type="file" multiple/>
             </div>
         </div>
     );
