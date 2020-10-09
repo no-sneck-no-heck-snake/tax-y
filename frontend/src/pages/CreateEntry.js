@@ -55,6 +55,8 @@ export function CreateEntry() {
 
 function CreateEntryForm({ setNewEntry, newEntry }) {
 
+  const { put, response, loading, error } = useFetch()
+
   const handleChange = (event) => {
     const name = event.target.name;
     setNewEntry({
@@ -62,6 +64,10 @@ function CreateEntryForm({ setNewEntry, newEntry }) {
       [name]: event.target.value,
     });
   };
+
+  async function updateEntry() {
+    const updatedEntry = await put('/entry/1', newEntry)
+  }
 
   return <BottomActionsCard style={{width: "100%"}}>
   <CardContent>
@@ -108,6 +114,7 @@ function CreateEntryForm({ setNewEntry, newEntry }) {
       variant="contained"
       color="primary"
       size="large"
+      onClick={(e) => updateEntry()}
       startIcon={<Save />}
     >
       Save
