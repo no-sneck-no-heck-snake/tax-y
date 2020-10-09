@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import useFetch from 'use-http'
 import { makeStyles } from '@material-ui/core/styles';
 import { MediaViewer } from "../components/MediaViewer"
 import { Grid, Card, FormControl, InputLabel, Select } from "@material-ui/core"
-import { BASE_URI } from "../Config"
 
 export function CreateEntry() {
 
@@ -12,7 +11,15 @@ export function CreateEntry() {
       width: 100%;
   `; 
 
-  const { loading, error, data = {} } = useFetch("/dummyImage", {}, [])
+  const [image, setImage] = useState(null)
+  const { get, response, loading, error } = useFetch()
+
+  useEffect(() => { loadImage() }, []) // componentDidMount
+
+  async function loadImage() {
+    const initialImage = await get("/dummyImage")
+    if (response.ok) setImage(initialImage)
+  }
 
   const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -39,13 +46,12 @@ export function CreateEntry() {
   };
 
   return <>
-    { !loading &&
+    { image &&
       <Grid container spacing={4}>
         <Grid container item xs={6}>
           <Card>
             <StyledMediaViewer
-                src="https://image.slidesharecdn.com/987fc920-d157-431c-9f02-ce3e44f9e9ff-150806172436-lva1-app6891/95/documentation-plan-example-1-638.jpg?cb=1438881924"
-                highlights={ [ { x: 100, y: 300, height: 20, width: 30 } ] }>
+                image={image}>
               </StyledMediaViewer>
           </Card>
         </Grid>

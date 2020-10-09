@@ -1,5 +1,7 @@
+import { Tooltip } from "@material-ui/core";
 import React, { useState } from "react";
 import styled from "styled-components";
+import { BASE_URI } from "../Config"
 
 const MediaContainer = styled.div`
   position: relative;
@@ -14,22 +16,23 @@ const HighlightContainer = styled.div`
 `;
 
 const Highlight = styled.div`
+  cursor: pointer;
   position: absolute;
   border: 1px solid rgb(255,0,0);
   background-color: rgba(3, 152, 252, 0.5);
 `; 
 
-export function MediaViewer({ src, highlights }) {
+export function MediaViewer({ image }) {
   return (
     <MediaContainer>
-        <img style={{ width: "100%"}} src={src}></img>
+        <img style={{ width: "100%"}} src={ BASE_URI + "/" + image.image}></img>
         <HighlightContainer>
-          { highlights.map(h => <Highlight style={{ 
-            top: `${h.y}px`, 
-            left: `${h.x}px`,
-            height: `${h.height}px`,
-            width: `${h.width}px`,
-          }}></Highlight>) }
+          { image.highlights.map(h => <Tooltip title={h.name}><Highlight style={{ 
+            top: `${(100 / image.height) * h.height}%`, 
+            left: `${(100 / image.width) * h.x}%`,
+            height: `${(100 / image.height) * h.height}%`,
+            width: `${(100 / image.width) * h.width}%`,
+          }}></Highlight></Tooltip>) }
         </HighlightContainer>
     </MediaContainer>
   );
