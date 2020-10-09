@@ -49,8 +49,8 @@ def make_app():
 
         return {"content": result}, HTTPStatus.CREATED
 
-    @app.route("/dummyImage", methods=['GET'])
-    def dummy_image():
+    @app.route("/entry/<id>", methods=['GET'])
+    def entry(id):
         width, height = Image.open("taxy/static/Lohn_Lohnausweis.jpg").size
         return {"image": "static/Lohn_Lohnausweis.jpg",
                 "height": height,
@@ -60,6 +60,9 @@ def make_app():
                     {"x": 169, "y": 242, "height": 69, "width": 96, "name": "No heck No Sneck! 🐍", "id": "2"},
                 ]
                 }
+    @app.route("/entry/<id>", methods =['PUT'])
+    def update_entry():
+        return {"status":"ok!"}
 
     @app.route("/info", methods=['GET'])
     def info():
@@ -67,6 +70,33 @@ def make_app():
             "deductions": [{"name": "Studienkosten", "value": 1200}],
             "income": [{"name": "Lohn", "value": 10000}, {"name": "Zins Sparkonto", "value": 100}],
             "capital": [{"name": "Sparkonto", "value": 69000}]
+        }
+
+    @app.route("/deductions", methods=['GET'])
+    def deductions():
+        return {
+            "categories": [
+                {
+                    "name": "Ausbildung",
+                    "maxDeduction": 12000,
+                    "currentDeduction": 8041,
+                    "entries":
+                    [
+                        {
+                            "name": "Kosten Uni",
+                            "value": 10000,
+                        },
+                        {
+                            "name": "Buch XY",
+                            "value": 41
+                        }
+                    ]
+                },
+                {
+                    "name": "Kinder",
+                    "currentDeduction": 1000
+                }
+            ]
         }
 
     @app.route('/static/<path:path>')
