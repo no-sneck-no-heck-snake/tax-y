@@ -31,7 +31,8 @@ def __get_match(content, indexes, name, data_extractor):
         "width": indexes["width"][match_index],
         "top": indexes["top"][match_index],
         "left": indexes["left"][match_index],
-        name: match
+        "name" :name,
+        "value": match
     }
             
     """except:

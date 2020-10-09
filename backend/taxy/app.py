@@ -133,4 +133,9 @@ def make_app():
     @app.route('/static/<path:path>')
     def send_static(path):
         return send_from_directory('static', path)
+
+    @app.route('/data/<path:path>')
+    def send_data(path):
+        return send_from_directory(os.path.join('..','data'), path)
+
     return app
