@@ -86,6 +86,7 @@ def make_app():
 
         return dumps({"id": inserted_id}), HTTPStatus.CREATED
 
+
     @app.route("/entry/<ObjectId:object_id>", methods=['GET'])
     def entry(object_id):
         entry = current_app.mongo.db.taxinfo.find_one({'_id': object_id})

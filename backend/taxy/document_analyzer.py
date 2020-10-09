@@ -1,7 +1,10 @@
 import re
+import spacy
+
 from PIL import Image
 import pytesseract
 from pdf2image import convert_from_path
+from collections import Counter
 
 from enum import Enum
 
@@ -69,6 +72,13 @@ def __bill_data_extractor(content):
     return match, original_match
 
 
+def __get_product_match(content):
+    nlp = spacy.load("de_core_news_md")
+    doc = nlp(content)
+
+    print([(X, X.ent_iob_, X.ent_type_) for X in doc])
+    return "asdfsdf"
+
 DOCUMENT_DATA_EXTRACTOR = {
     DocumentType.WAGE_CARD: lambda content, indexes: [
         __get_match(content, indexes, "amount", __wage_data_extractor)
@@ -80,7 +90,8 @@ DOCUMENT_DATA_EXTRACTOR = {
     ],
     #DocumentType.INSURACNCE_STATMENT = 3
     DocumentType.BILL: lambda content, indexes: [
-        __get_match(content, indexes, "amount", __bill_data_extractor)
+        __get_match(content, indexes, "amount", __bill_data_extractor),
+        __get_product_match(content)
     ]
 }
 
@@ -101,5 +112,5 @@ def scan_document(image):
     text_result = pytesseract.image_to_string(image, lang='deu')
     indexes = pytesseract.image_to_data(image, lang="deu", output_type=pytesseract.Output.DICT)
     #FIXME: ? text_result = " ".join(indexes["text"])
-    print(" ".join(indexes["text"]))
+    print(text_result)
     return classify_document(text_result, indexes)
