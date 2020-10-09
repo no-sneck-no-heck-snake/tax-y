@@ -6,17 +6,17 @@ from pdf2image import convert_from_path
 from enum import Enum
 
 class DocumentType(Enum):
-    WAGE_CARD = 1
-    INTEREST_STATEMENT = 2
-    INSURACNCE_STATMENT = 3
-    BILL = 4
+    WAGE_CARD = "wage_card"
+    INTEREST_STATEMENT = "interest_statement"
+    INSURACNCE_STATMENT = "insurance_statment"
+    BILL = "bill"
 
 DOCUMENT_CLASSIFYER = {
     DocumentType.WAGE_CARD: lambda content: "lohnausweis" in content.lower(),
     DocumentType.INTEREST_STATEMENT: lambda content: "zins" in content.lower() and "saldo" in content.lower(),
     DocumentType.INSURACNCE_STATMENT: lambda content: False,
     DocumentType.BILL: lambda content: "rechnung" in content.lower()
-}
+} 
 
 DOCUMENT_DATA_EXTRACTOR = {
     DocumentType.WAGE_CARD: lambda content: {

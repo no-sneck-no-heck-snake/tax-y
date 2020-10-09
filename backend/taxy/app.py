@@ -8,6 +8,7 @@ from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 
+from uuid import uuid4
 from werkzeug.utils import secure_filename
 
 from taxy.document_analyzer import scan_document
@@ -32,6 +33,7 @@ def make_app():
 
     @app.route("/document", methods=["POST"])
     def root():
+        user_session = request.cookies.get('_taxy_session', 0)
         if "file" not in request.files:
             return {"message": "No file given in the request"}, HTTPStatus.BAD_REQUEST
 
@@ -40,7 +42,7 @@ def make_app():
             return {"message": "No file selected for uploading"}, HTTPStatus.BAD_REQUEST
 
         base_path = app.config["UPLOAD_FOLDER"]
-        target_file = base_path / secure_filename(uploaded_file.filename)
+        target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
 
         # ensure directory for the uploaded doc exists
         base_path.mkdir(parents=True, exist_ok=True)
@@ -48,6 +50,16 @@ def make_app():
         # save the upploaded documentation
         uploaded_file.save(str(target_file))
         result = scan_document(target_file)
+
+        print(target_file)
+        if not current_app.mongo.db.users.find_one({"_id": user_session}):
+            current_app.mongo.db.users.insert({"_id": user_session})
+
+        current_app.mongo.db.taxinfo.insert({
+            "user": user_session,
+            result[0]: result[1],
+            "document": str(target_file)
+        })
 
         return {"content": result}, HTTPStatus.CREATED
 
