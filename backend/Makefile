@@ -3,7 +3,7 @@ app:
 
 local:
 	pipenv install
-	FLASK_APP=taxy pipenv run flask run
+	FLASK_APP=taxy pipenv run flask run --host 0.0.0.0
 
 docker:
 	docker build -t taxy-backend .
