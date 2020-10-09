@@ -72,11 +72,11 @@ def make_app():
 
         current_app.mongo.db.taxinfo.insert({
             "user": user_session,
-            "file":  str(target_file),
-            "width": width,
-            "height": height,
             "entry":
             {
+                "file":  str(target_file),
+                "width": width,
+                "height": height,
                 "type": result[0],
                 "content": result[1]
             }
@@ -86,17 +86,9 @@ def make_app():
 
     @app.route("/entry/<ObjectId:id_str>", methods=['GET'])
     def entry(id_str):
-        entry = current_app.mongo.db.taxinfo.find_one({'_id': id_str})
-        print(entry)
-        return entry["wage_card"]
-        return {"image": "static/Lohn_Lohnausweis.jpg",
-                "height": 1,
-                "width": 2,
-                "highlights": [
-                    {"x": 0, "y": 0, "height": 100, "width": 100, "name": "💩", "id": "1"},
-                    {"x": 169, "y": 242, "height": 69, "width": 96, "name": "No heck No Sneck! 🐍", "id": "2"},
-                ]
-                }
+        entry = current_app.mongo.db.taxinfo.find_one()
+        # entry = current_app.mongo.db.taxinfo.find_one({'_id': id_str})
+        return entry["entry"]
 
     @app.route("/entry/<id>", methods=['PUT'])
     def update_entry():
