@@ -39,7 +39,7 @@ function App() {
               <Navigation></Navigation>
               <Content>
                 <Switch>
-                  <Route path="/entry">
+                  <Route path="/entry/:id">
                     <EntryDetail />
                   </Route>
                   <Route path="/">

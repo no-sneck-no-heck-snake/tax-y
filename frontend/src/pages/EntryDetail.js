@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom'
 import styled from "styled-components";
 import useFetch from 'use-http'
 import { Save } from "@material-ui/icons"
@@ -18,7 +19,9 @@ const StyledMediaViewer = styled(MediaViewer)`
   width: 100%;
 `;
 
-export function EntryDetail() { 
+export function EntryDetail({  }) { 
+
+  const { entryId } = useParams();
 
   const [image, setImage] = useState(null)
   const { get, response, loading, error } = useFetch()
@@ -31,13 +34,16 @@ export function EntryDetail() {
   useEffect(() => { loadImage() }, []) // componentDidMount
 
   async function loadImage() {
-    const initialImage = await get("/entry/1")
+    const initialImage = await get("/entry/" + entryId)
     if (response.ok) setImage(initialImage)
   }
 
   return <>
     { image &&
       <Grid container spacing={4}>
+        {/* <Grid container item>
+          <Button color="primary" component={Link} to="/">Back</Button>
+        </Grid> */}
         <Grid container item xs={6}>
           <Card>
             <StyledMediaViewer
@@ -66,7 +72,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
   };
 
   async function updateEntry() {
-    const updatedEntry = await put('/entry/1', taxEntry)
+    const updatedEntry = await put('/entry/1', entry.id)
   }
 
   return <BottomActionsCard style={{width: "100%"}}>
