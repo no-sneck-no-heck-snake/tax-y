@@ -6,6 +6,7 @@ from http import HTTPStatus
 from flask import Flask, jsonify, request, current_app
 from flask.helpers import send_from_directory
 from flask_pymongo import PyMongo
+from pdf2image import convert_from_path
 from flask_cors import CORS
 
 from uuid import uuid4
@@ -42,38 +43,49 @@ def make_app():
             return {"message": "No file selected for uploading"}, HTTPStatus.BAD_REQUEST
 
         base_path = app.config["UPLOAD_FOLDER"]
-        target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
-
         # ensure directory for the uploaded doc exists
         base_path.mkdir(parents=True, exist_ok=True)
 
-        # save the upploaded documentation
-        uploaded_file.save(str(target_file))
-        result = scan_document(target_file)
+        if uploaded_file.filename.suffix == ".pdf":
+            someImage = convert_from_path(str(uploaded_file.filename))[0]
+            target_file = base_path / (str(uuid4()) + ".jpg")
+            someImage.save(target_file, 'JPEG')
+        else:
+            target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
+            uploaded_file.save(str(target_file))
+            someImage = Image.open(str(uploaded_file.filename))
 
-        print(target_file)
+        result = scan_document(someImage)
+
+        print(f'Saved file at:{target_file}')
         if not current_app.mongo.db.users.find_one({"_id": user_session}):
             current_app.mongo.db.users.insert({"_id": user_session})
 
+        width, height = Image.open(str(target_file)).size
+
         current_app.mongo.db.taxinfo.insert({
             "user": user_session,
-            result[0]: result[1],
-            "document": str(target_file)
+            "file":  str(target_file),
+            "entry": 
+            {
+                "type": result[0],
+                "content": result[1]
+            }
         })
 
         return {"content": result}, HTTPStatus.CREATED
 
     @app.route("/entry/<id>", methods=['GET'])
     def entry(id):
-        width, height = Image.open("taxy/static/Lohn_Lohnausweis.jpg").size
         return {"image": "static/Lohn_Lohnausweis.jpg",
-                "height": height,
-                "width": width,
+                "height": 1,
+                "width": 2,
                 "highlights": [
                     {"x": 0, "y": 0, "height": 100, "width": 100, "name": "💩", "id": "1"},
                     {"x": 169, "y": 242, "height": 69, "width": 96, "name": "No heck No Sneck! 🐍", "id": "2"},
                 ]
                 }
+                
     @app.route("/entry/<id>", methods =['PUT'])
     def update_entry():
         return {"status":"ok!"}
