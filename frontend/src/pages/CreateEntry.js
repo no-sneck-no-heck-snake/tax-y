@@ -12,7 +12,7 @@ export function CreateEntry() {
       width: 100%;
   `; 
 
-  const { loading, error, data = {} } = useFetch(BASE_URI + "/dummyImage", {}, [])
+  const { loading, error, data = {} } = useFetch("/dummyImage", {}, [])
 
   const useStyles = makeStyles((theme) => ({
     formControl: {

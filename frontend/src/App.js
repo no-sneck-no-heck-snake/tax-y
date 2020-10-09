@@ -7,6 +7,7 @@ import { ThemeProvider } from "@material-ui/core";
 import styled, { createGlobalStyle } from "styled-components";
 import { theme } from "./Theme";
 import { Navigation } from "./components/Navigation";
+import { Provider } from "use-http";
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -31,24 +32,26 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      <ThemeProvider theme={theme}>
-        <Router>
-          <div>
-            <Navigation></Navigation>
-            <Content>
-              <Switch>
-                <Route path="/create-entry">
-                  <CreateEntry />
-                </Route>
-                <Route path="/">
-                  <Home />
-                </Route>
-              </Switch>
-            <ImportFile></ImportFile>
-            </Content>
-          </div>
-        </Router>
-      </ThemeProvider>
+      <Provider url="http://10.10.1.123:5000">
+        <ThemeProvider theme={theme}>
+          <Router>
+            <div>
+              <Navigation></Navigation>
+              <Content>
+                <Switch>
+                  <Route path="/create-entry">
+                    <CreateEntry />
+                  </Route>
+                  <Route path="/">
+                    <Home />
+                  </Route>
+                </Switch>
+                <ImportFile></ImportFile>
+              </Content>
+            </div>
+          </Router>
+        </ThemeProvider>
+      </Provider>
     </>
   );
 }
