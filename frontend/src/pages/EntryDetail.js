@@ -167,6 +167,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
     </Grid>
   </CardContent>
   <CardActions style={{ justifyContent: 'flex-end' }}>
+    <Button size="large" onClick={(e) => history.push('/')} variant="contained">Zurück</Button>
     <Button
       variant="contained"
       color="primary"
