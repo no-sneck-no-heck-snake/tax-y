@@ -78,8 +78,8 @@ def make_app():
     @app.route("/entry/<id>", methods=['GET'])
     def entry(id):
         return {"image": "static/Lohn_Lohnausweis.jpg",
-                "height": height,
-                "width": width,
+                "height": 1,
+                "width": 2,
                 "highlights": [
                     {"x": 0, "y": 0, "height": 100, "width": 100, "name": "💩", "id": "1"},
                     {"x": 169, "y": 242, "height": 69, "width": 96, "name": "No heck No Sneck! 🐍", "id": "2"},
