@@ -26,7 +26,7 @@ export function Jumbo() {
             <CardActionArea>
                 <CardMedia
                     className={classes.media}
-                    image="/src/images/contemplative-reptile.jpg"
+                    image="/images/contemplative-reptile.jpg"
                     title="Contemplative Reptile"
                 />
                 <CardContent>

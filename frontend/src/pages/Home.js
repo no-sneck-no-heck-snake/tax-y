@@ -1,5 +1,10 @@
 import React from "react";
+import { Jumbo } from "../components/Jumbo";
 
 export function Home() {
-  return <div>Hello No Sneck No Heck</div>;
+  return (
+    <>
+      <Jumbo></Jumbo>
+    </>
+  );
 }
