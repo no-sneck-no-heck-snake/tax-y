@@ -11,6 +11,7 @@ flask = "*"
 flask-pymongo = "*"
 pytesseract = "*"
 gunicorn = "*"
+pdf2image = "*"
 
 [dev-packages]
 pytest = "*"
