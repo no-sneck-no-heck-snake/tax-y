@@ -103,9 +103,9 @@ def make_app():
                 "width": width,
                 "height": height,
                 "type": result[0],
-                "content": result[1]
+                "content": result[1],
+                "deductionCategory": category #hack
             },
-            "deductionCategory": category #hack
         }).inserted_id
 
         return dumps({"id": inserted_id}), HTTPStatus.CREATED
