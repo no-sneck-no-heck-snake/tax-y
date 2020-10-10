@@ -78,7 +78,6 @@ def make_app():
             target_file = base_path / (str(uuid4()) + ".jpg")
             some_image.save(str(target_file), 'JPEG')
         else:
-            print(uploaded_file.filename)
             target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
             uploaded_file.save(str(target_file))
             some_image = Image.open(str(target_file))
@@ -94,8 +93,17 @@ def make_app():
             })
 
         width, height = Image.open(str(target_file)).size
-
-
+        # error case
+        if result == None:
+            type = None
+            content = None
+            deduction_categories = None
+            name = None
+        else:
+            type = result[0]
+            content = result[1]
+            deduction_categories = create_category_somehow()
+            name = create_the_name_somehow(result[0])
         inserted_id = current_app.mongo.db.taxinfo.insert_one({
             "user": user_session,
             "entry":
@@ -103,10 +111,10 @@ def make_app():
                 "file":  str(target_file),
                 "width": width,
                 "height": height,
-                "type": result[0],
-                "content": result[1],
-                "deductionCategory": create_category_somehow(), #hack
-                "name": create_the_name_somehow(result[0]) #häckägän
+                "type": type,
+                "content": content,
+                "deductionCategory": deduction_categories, #hack
+                "name":name  #häckägän
             },
         }).inserted_id
 
