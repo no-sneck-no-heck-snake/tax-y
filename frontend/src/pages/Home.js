@@ -58,6 +58,7 @@ export function Home() {
     data = { capital: [], deductions: [], income: [] },
   } = useFetch("/info", { method: "GET" }, []);
 
+  console.log(data);
   const { post } = useFetch("document");
   const deductions = useFetch("/deductions", { method: "GET" }, []);
   let history = useHistory();
@@ -188,7 +189,7 @@ export function Home() {
       </Card>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
-          <SummaryCard title="Einkünfte">
+          <SummaryCard title="Einkünfte" amount={data.totalIncome}>
             {loading ? (
               <DashboardCardSkeleton />
             ) : (
@@ -197,7 +198,7 @@ export function Home() {
           </SummaryCard>
         </Grid>
         <Grid item xs={12} md={6}>
-          <SummaryCard title="Vermögen">
+          <SummaryCard title="Vermögen" amount={data.totalCapital}>
             {loading ? (
               <DashboardCardSkeleton />
             ) : (
