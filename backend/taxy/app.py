@@ -94,7 +94,8 @@ def make_app():
             })
 
         width, height = Image.open(str(target_file)).size
-        category =  deduction_categories['categories'][randrange(start=0, stop=2)]["type"] #hack
+
+
         inserted_id = current_app.mongo.db.taxinfo.insert_one({
             "user": user_session,
             "entry":
@@ -104,12 +105,22 @@ def make_app():
                 "height": height,
                 "type": result[0],
                 "content": result[1],
-                "deductionCategory": category #hack
+                "deductionCategory": create_category_somehow(), #hack
+                "name": create_the_name_somehow(result[0]) #häckägän
             },
         }).inserted_id
 
         return dumps({"id": inserted_id}), HTTPStatus.CREATED
 
+    def create_category_somehow():
+        return deduction_categories['categories'][randrange(start=0, stop=2)]["type"] #hack
+
+    def create_the_name_somehow(type): #häckägän
+        if type == "bill":
+            return f"Rechnung #{randrange(start=15, stop=300)}"
+        elif type == "wage_card":
+            return "Lohnausweis"
+        return None
 
     @app.route("/entry/<ObjectId:object_id>", methods=['GET'])
     def entry(object_id):
@@ -135,7 +146,7 @@ def make_app():
             if entry_type == "wage_card":
                 for marker in e["content"]:
                     if marker["name"] == "amount":
-                        income.append({"name": f'Lohnausweis', "value": marker["value"], "id": str(entry["_id"])})
+                        income.append({"name": e["name"], "value": marker["value"], "id": str(entry["_id"])})
 
             elif entry_type == "interest_statement":
                 iban =""
@@ -172,7 +183,6 @@ def make_app():
 
         return __get_entry_info(user_session)
 
-    someCompanies = ["Digitec AG", "Hornbach", "Yb-Ticketshop"]
 
     @app.route("/deductions", methods=['GET'])
     def deductions():
@@ -190,7 +200,7 @@ def make_app():
                         for cat in dedus["categories"]:
                             if "deductionCategory" in e.keys():
                                 if cat["type"] == e["deductionCategory"]:
-                                    cat["entries"].append({"name": f'Rechnung {someCompanies[randrange(start=0, stop=3)]}', "value": marker["value"], "id": str(entry["_id"])})
+                                    cat["entries"].append({"name": e["name"], "value": marker["value"], "id": str(entry["_id"])})
                                     cat["currentDeduction"]+= marker["value"]
         return dedus
 
