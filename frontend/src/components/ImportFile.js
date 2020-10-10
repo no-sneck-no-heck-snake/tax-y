@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     exampleWrapper: {
         position: 'relative',
         marginTop: theme.spacing(3),
-        height: 380,
+        height: 0,
     },
     radioGroup: {
         margin: theme.spacing(1, 0),
@@ -109,7 +109,7 @@ export function ImportFile() {
                 </SpeedDial>
                 <input accept="application/pdf,image/*" onChange={onChange} className={classes.input}
                        id="doc-upload"
-                       type="file" />
+                       type="file"/>
             </div>
             <UploadModal
                 open={uploadModalOpen}
