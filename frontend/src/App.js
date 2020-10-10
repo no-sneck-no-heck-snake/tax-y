@@ -33,7 +33,7 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      <Provider url="http://10.10.1.123:5000">
+      <Provider url="http://10.10.1.123:5000" options={{ cacheLife: 0, cachePolicy: "no-cache" }}>
         <ThemeProvider theme={theme}>
           <Router>
             <div>
