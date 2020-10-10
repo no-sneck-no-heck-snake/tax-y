@@ -147,9 +147,9 @@ export function Home() {
           ></NumberCard>
         </Grid>
       </Grid>
-      <Card container spacing={3}>
+      <Card container spacing={3} style={{ marginBottom: 32 }}>
         <Grid item xs={12}>
-          <SimpleSlider/>
+          <SimpleSlider />
         </Grid>
       </Card>
       <Card>
