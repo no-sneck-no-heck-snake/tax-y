@@ -91,7 +91,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
       });
     } else {
 
-      const fieldValues = taxEntry.content.map(c => ({ ...c, name: c.name, value: c.value }));
+      const fieldValues = (taxEntry.content || []).map(c => ({ ...c, name: c.name, value: c.value }));
       const val = fieldValues.find(v => v.name === name);
       if (val) {
         val.value = fieldValue
@@ -134,7 +134,7 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
   }
 
   function getEntryValue(name) {
-    const field = taxEntry.content.find(f => f.name === name);
+    const field = (taxEntry.content || []).find(f => f.name === name);
     return field ? field.value : "";
   }
 
