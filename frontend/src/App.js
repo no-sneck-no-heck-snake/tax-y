@@ -1,8 +1,7 @@
 import React from "react";
-import {BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
+import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import {Home} from "./pages/Home";
 import {EntryDetail} from "./pages/EntryDetail";
-import {ImportFile} from "./components/ImportFile";
 import {ThemeProvider} from "@material-ui/core";
 import styled, {createGlobalStyle} from "styled-components";
 import {theme} from "./Theme";
@@ -15,6 +14,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
+    padding-bottom: 64px;
   }
   body {
     background: #F6F9FC;
