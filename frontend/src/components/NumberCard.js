@@ -13,13 +13,12 @@ const getBoxShadow = (rgb) => `0 2.8px 3.3px rgba(${rgb}, 0.028),
 `;
 
 const Card = styled(_Card)`
-  margin: 16px 0;
   height: 100%;
   width: 100%;
 `;
 const Count = styled(CountUp)`
   color: white;
-  font-size: 32px;
+  font-size: 24px;
 `;
 
 export function NumberCard({ title, background, loading, number }) {
