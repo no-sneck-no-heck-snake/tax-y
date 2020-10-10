@@ -15,6 +15,12 @@ gunicorn = "*"
 pdf2image = "*"
 requests = "*"
 spacy = "*"
+scipy = "*"
+numpy = "*"
+opencv-python = "*"
+opencv-contrib-python = "*"
+ocrd-fork-pylsd = "*"
+
 
 [dev-packages]
 pytest = "*"

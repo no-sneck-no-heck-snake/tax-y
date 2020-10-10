@@ -1,5 +1,7 @@
 import os
 
+import cv2
+import numpy
 from pathlib import Path
 from http import HTTPStatus
 from random import random, randrange
@@ -19,6 +21,7 @@ from werkzeug.utils import secure_filename
 
 from taxy.document_analyzer import scan_document
 from taxy.errors import ApiError
+from taxy.scanner import DocScanner
 
 from PIL import Image
 
@@ -111,6 +114,10 @@ def make_app():
             target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
             uploaded_file.save(str(target_file))
             some_image = Image.open(str(target_file))
+            image = cv2.cvtColor(numpy.array(some_image), cv2.COLOR_RGB2BGR)
+            scanner = DocScanner()
+            cv2.imwrite(str(target_file), scanner.scan(image))
+            some_image = Image.open(str(target_file))
 
         result = scan_document(some_image)
 
@@ -200,9 +207,9 @@ def make_app():
                 capital.append({"name": iban, "value": value, "id": str(entry["_id"])})
                 income.append({"name": f'Zinsertrag {iban}', "value": intrests, "id": str(entry["_id"])})
         for i in income:
-            total_income += i["value"]
+            total_income += int(i["value"])
         for c in capital:
-            total_capital += c["value"]
+            total_capital += int(c["value"])
         return {
             "income": income,
             "totalIncome": total_income,
