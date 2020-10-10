@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     exampleWrapper: {
-        position: 'relative',
+        position: 'static',
         marginTop: theme.spacing(3),
         height: 0,
     },

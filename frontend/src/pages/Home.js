@@ -21,8 +21,9 @@ import styled from "styled-components";
 import UploadModal from "../components/UploadModal";
 import Alert from "@material-ui/lab/Alert";
 import { useHistory } from "react-router-dom";
-
 import { NumberCard } from "../components/NumberCard";
+import SimpleSlider from "../components/SimpleSlider";
+
 
 {
   /* <Grid container spacing={3}>
@@ -144,6 +145,11 @@ export function Home() {
           ></NumberCard>
         </Grid>
       </Grid>
+      <Card container spacing={3}>
+        <Grid item xs={12}>
+          <SimpleSlider/>
+        </Grid>
+      </Card>
       <Card>
         <UploadModal
           open={uploadModalOpen}

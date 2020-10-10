@@ -9,6 +9,8 @@ import {theme} from "./Theme";
 import {Navigation} from "./components/Navigation";
 import {Provider} from "use-http";
 import {AccountDetail} from "./pages/AccountDetail";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const GlobalStyle = createGlobalStyle`
   html, body {
