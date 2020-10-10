@@ -109,7 +109,7 @@ export function ImportFile() {
                 </SpeedDial>
                 <input accept="application/pdf,image/*" onChange={onChange} className={classes.input}
                        id="doc-upload"
-                       type="file" multiple/>
+                       type="file" />
             </div>
         </div>
     );

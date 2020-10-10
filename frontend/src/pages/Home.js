@@ -112,7 +112,7 @@ export function Home() {
       <Grid container spacing={4} style={{ marginBottom: "32px" }}>
         <Grid item xs={6} md={3}>
           <NumberCard
-            title="Kantonsteuer"
+            title="Kantonssteuer"
             loading={taxes.loading}
             number={taxes.data && taxes.data.canton}
             background="251, 59, 127"
