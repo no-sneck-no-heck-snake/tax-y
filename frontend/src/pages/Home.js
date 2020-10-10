@@ -1,21 +1,28 @@
-import React, {useCallback, useState} from 'react'
+import React, { useCallback, useState } from "react";
 import { SummaryCard } from "../components/SummaryCard";
 import { useFetch } from "use-http";
 import { Grid } from "@material-ui/core";
 import { DashboardCardSkeleton } from "../components/DashboardCardSkeleton";
 import { SummaryEntry } from "../components/SummaryEntry";
-import { Card, CardContent, Typography, Box, Hidden } from "@material-ui/core";
+import {
+  Card as _Card,
+  CardContent,
+  Typography,
+  Box,
+  Hidden,
+} from "@material-ui/core";
 import { DeductionCategory } from "../components/DeductionCategory";
 import { DeductionChart } from "../components/DeductionChart";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { SavingProgress } from "../components/SavingProgress";
-import {useDropzone} from 'react-dropzone'
-import styled from 'styled-components'
-import UploadModal from '../components/UploadModal';
-import Alert from '@material-ui/lab/Alert';
-import { useHistory } from "react-router-dom"
+import { useDropzone } from "react-dropzone";
+import styled from "styled-components";
+import UploadModal from "../components/UploadModal";
+import Alert from "@material-ui/lab/Alert";
+import { useHistory } from "react-router-dom";
 
+import { NumberCard } from "../components/NumberCard";
 
 {
   /* <Grid container spacing={3}>
@@ -37,6 +44,13 @@ import { useHistory } from "react-router-dom"
   </Grid> */
 }
 
+const Card = styled(_Card)`
+  box-shadow: 0 2.8px 3.3px rgba(0, 0, 0, 0.028),
+    0 6.7px 6.9px rgba(0, 0, 0, 0.044), 0 12.5px 11.3px rgba(0, 0, 0, 0.056),
+    0 22.3px 17.5px rgba(0, 0, 0, 0.067), 0 41.8px 29.4px rgba(0, 0, 0, 0.074),
+    0 100px 71px rgba(0, 0, 0, 0.07) !important;
+  margin-bottom: 16px;
+`;
 export function Home() {
   const {
     loading,
@@ -44,29 +58,29 @@ export function Home() {
     data = { capital: [], deductions: [], income: [] },
   } = useFetch("/info", { method: "GET" }, []);
 
-  const {post} = useFetch('document')
+  const { post } = useFetch("document");
   const deductions = useFetch("/deductions", { method: "GET" }, []);
   let history = useHistory();
 
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
-  const onDrop = useCallback(async acceptedFiles => {
+  const onDrop = useCallback(async (acceptedFiles) => {
     let file = acceptedFiles[0];
-    setUploadModalOpen(true)
-    let data = new FormData()
-    data.append('file', file)
+    setUploadModalOpen(true);
+    let data = new FormData();
+    data.append("file", file);
     if (data instanceof FormData) {
-      let response = await post('', data);
+      let response = await post("", data);
       setUploadModalOpen(false);
       if (response && response.id) {
-        history.push('/entry/' + response.id["$oid"])
+        history.push("/entry/" + response.id["$oid"]);
       } else {
         //alert("Error on detecting")
       }
     }
-      
-  }, [])
+  }, []);
 
-  const {getRootProps, isDragActive} = useDropzone({onDrop})
+  const { getRootProps, isDragActive } = useDropzone({ onDrop });
+  const taxes = useFetch("/calculate-taxes", { method: "GET" }, []);
 
   if (error) {
     return (
@@ -88,11 +102,52 @@ export function Home() {
 
   return (
     <div {...getRootProps()}>
-      { isDragActive ?  <Alert variant="outlined" severity="info">
-        Datei hier loslassen
-      </Alert>: <></> }
+      {isDragActive ? (
+        <Alert variant="outlined" severity="info">
+          Datei hier loslassen
+        </Alert>
+      ) : (
+        <></>
+      )}
+      <Grid container spacing={4} style={{ marginBottom: "32px" }}>
+        <Grid item xs={6} md={3}>
+          <NumberCard
+            title="Kantonsteuer"
+            loading={taxes.loading}
+            number={taxes.data && taxes.data.canton}
+            background="251, 59, 127"
+          ></NumberCard>
+        </Grid>
+        <Grid item xs={6} md={3}>
+          <NumberCard
+            title="Gemeindesteuer"
+            loading={taxes.loading}
+            number={taxes.data && taxes.data.city}
+            background="68, 170, 81"
+          ></NumberCard>
+        </Grid>
+        <Grid item xs={6} md={3}>
+          <NumberCard
+            title="Bundessteuer"
+            loading={taxes.loading}
+            number={taxes.data && taxes.data.fed}
+            background="255, 168, 70"
+          ></NumberCard>
+        </Grid>
+        <Grid item xs={6} md={3}>
+          <NumberCard
+            title="Total"
+            loading={taxes.loading}
+            number={taxes.data && taxes.data.total}
+            background="83, 113, 227"
+          ></NumberCard>
+        </Grid>
+      </Grid>
       <Card>
-        <UploadModal open={uploadModalOpen} setOpen={setUploadModalOpen}></UploadModal>
+        <UploadModal
+          open={uploadModalOpen}
+          setOpen={setUploadModalOpen}
+        ></UploadModal>
         <CardContent>
           <Typography gutterBottom={true} variant="h5">
             Abzüge
@@ -133,7 +188,7 @@ export function Home() {
       </Card>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
-          <SummaryCard background="#FB3B7F" title="Einkünfte">
+          <SummaryCard title="Einkünfte">
             {loading ? (
               <DashboardCardSkeleton />
             ) : (
@@ -142,7 +197,7 @@ export function Home() {
           </SummaryCard>
         </Grid>
         <Grid item xs={12} md={6}>
-          <SummaryCard background="rgb(243, 171, 62)" title="Vermögen">
+          <SummaryCard title="Vermögen">
             {loading ? (
               <DashboardCardSkeleton />
             ) : (
@@ -151,7 +206,7 @@ export function Home() {
           </SummaryCard>
         </Grid>
       </Grid>
-      
+
       {/* <input style={{ display: "none" }} {...getInputProps()} /> */}
     </div>
   );

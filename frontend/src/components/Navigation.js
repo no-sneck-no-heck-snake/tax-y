@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
 
 const Nav = styled.nav`
-  padding: 16px 32px;
+  padding: 16px 16px;
+  padding-bottom: 0;
 `;
 const NavContent = styled.section`
   margin: auto;
@@ -15,10 +15,6 @@ const NavContent = styled.section`
 
 const Spacer = styled.span`
   flex-grow: 1;
-`;
-
-const NavItem = styled(Link)`
-  text-decoration: none;
 `;
 
 export function Navigation() {

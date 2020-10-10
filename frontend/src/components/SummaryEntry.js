@@ -7,7 +7,6 @@ import { formatFranks } from "../util";
 const ItemContainer = styled.div``;
 
 const ItemContent = styled(Grid)`
-  color: white;
 `;
 
 export function SummaryEntry({ item }) {
