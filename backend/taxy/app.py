@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from http import HTTPStatus
 from random import random, randrange
+from numpy.lib.function_base import append
 import requests
 from bson.json_util import dumps
 
@@ -21,15 +22,21 @@ from taxy.errors import ApiError
 
 from PIL import Image
 
+KIDS_CATEGORY = {"type": "kids", "displayName": "Kinder", "color": "#00C49F", "icon": "child", "maxDeduction": 6942}
+STUDY_CATEGORY ={"type": "study", "displayName": "Ausbildung", "color": "#0088FE", "icon": "school", "maxDeduction": 1234}
+AAA_CATEGORY = {"type": "3a", "displayName": "3a", "color": "#FF8042", "icon": "poll", "maxDeduction": 6510}
 
 deduction_categories = {
             "categories":
             [
-                {"type": "kids", "displayName": "Kinder", "color": "#00C49F", "icon": "child", "maxDeduction": 6942},
-                {"type": "study", "displayName": "Ausbildung", "color": "#0088FE", "icon": "school", "maxDeduction": 1234},
-                {"type": "3a", "displayName": "3a", "color": "#FF8042", "icon": "poll", "maxDeduction": 6510},
+                KIDS_CATEGORY,
+                STUDY_CATEGORY,
+                AAA_CATEGORY
+                
             ]
         }
+
+                
 
 def make_app():
     app = Flask(__name__)
@@ -57,9 +64,29 @@ def make_app():
         r.headers['Cache-Control'] = 'public, max-age=0'
         return r
 
+    def get_deduction_categories_of_current_user():
+        user = current_app.mongo.db.users.find_one({"_id": get_user()})
+        cats = get_self_deductable_categories_of_current_user()['categories']
+        for trait in user["traits"]:
+            if trait == "with_children":
+                cats.append(KIDS_CATEGORY)
+        return {"categories": cats}
+
+    def get_self_deductable_categories_of_current_user():
+        user = current_app.mongo.db.users.find_one({"_id": get_user()})
+        cats = []
+        for trait in user["traits"]:
+            if trait == "student":
+                cats.append(STUDY_CATEGORY)
+        cats.append(AAA_CATEGORY)
+        return {"categories": cats}
+
+    def get_user():
+        return request.cookies.get('_taxy_session', 0)
+
     @app.route("/document", methods=["POST"])
     def root():
-        user_session = request.cookies.get('_taxy_session', 0)
+        user_session = get_user()
         if "file" not in request.files:
             return {"message": "No file given in the request"}, HTTPStatus.BAD_REQUEST
         uploaded_file = request.files["file"]
@@ -97,12 +124,12 @@ def make_app():
         if result == None:
             type = None
             content = None
-            deduction_categories = None
+            category = None
             name = None
         else:
             type = result[0]
             content = []
-            deduction_categories = create_category_somehow()
+            category = create_category_somehow() # remove?
             name = create_the_name_somehow(result[0])
         inserted_id = current_app.mongo.db.taxinfo.insert_one({
             "user": user_session,
@@ -113,7 +140,7 @@ def make_app():
                 "height": height,
                 "type": type,
                 "content": content,
-                "deductionCategory": deduction_categories, #hack
+                "deductionCategory": category, #hack
                 "name":name  #häckägän
             },
         }).inserted_id
@@ -121,7 +148,7 @@ def make_app():
         return dumps({"id": inserted_id}), HTTPStatus.CREATED
 
     def create_category_somehow():
-        return deduction_categories['categories'][randrange(start=0, stop=2)]["type"] #hack
+        return get_deduction_categories_of_current_user()['categories'][randrange(start=0, stop=2)]["type"] #hack
 
     def create_the_name_somehow(type): #häckägän
         if type == "bill":
@@ -183,18 +210,18 @@ def make_app():
 
     @app.route("/deduction_categories", methods=['GET'])
     def get_deduction_categories():
-        return deduction_categories
+        return get_self_deductable_categories_of_current_user()
 
     @app.route("/info", methods=['GET'])
     def info():
-        user_session = request.cookies.get('_taxy_session', 0)
+        user_session = get_user()
 
         return __get_entry_info(user_session)
 
 
     @app.route("/deductions", methods=['GET'])
     def deductions():
-        dedus = deepcopy(deduction_categories)
+        dedus = deepcopy(get_deduction_categories_of_current_user())
         for ded in dedus["categories"]:
             ded["entries"] = []
             ded["currentDeduction"] = 0
@@ -214,7 +241,7 @@ def make_app():
 
     @app.route("/calculate-taxes")
     def calculate_taxes():
-        user_session = request.cookies.get('_taxy_session', 0)
+        user_session = get_user()
 
         infos = __get_entry_info(user_session)
         #dedus = deductions()
