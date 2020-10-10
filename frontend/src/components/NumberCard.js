@@ -3,7 +3,7 @@ import CountUp from "react-countup";
 
 import { Card as _Card, CardContent, Typography } from "@material-ui/core";
 import styled from "styled-components";
-import Skeleton from "react-loading-skeleton";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { formatFranks } from "../util";
 
 const getBoxShadow = (rgb) => `0 2.8px 3.3px rgba(${rgb}, 0.028),
@@ -41,7 +41,9 @@ export function NumberCard({ title, background, loading, number }) {
           </Typography>
 
           {loading ? (
-            <Skeleton />
+            <SkeletonTheme color="rgba(255,255,255,0.2)" highlightColor="rgba(255,255,255,0.1)">
+              <Skeleton height={40} width={80} />
+            </SkeletonTheme>
           ) : (
             <Count formattingFn={formatFranks} end={number} />
           )}
