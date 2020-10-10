@@ -15,6 +15,7 @@ import { DeductionCategory } from "../components/DeductionCategory";
 import { DeductionChart } from "../components/DeductionChart";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { SavingProgress } from "../components/SavingProgress";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import UploadModal from "../components/UploadModal";
@@ -22,6 +23,8 @@ import Alert from "@material-ui/lab/Alert";
 import { useHistory } from "react-router-dom";
 
 import { NumberCard } from "../components/NumberCard";
+import SimpleSlider from "../components/SimpleSlider";
+
 import { ImportFile } from "../components/ImportFile";
 
 {
@@ -58,6 +61,7 @@ export function Home() {
     data = { capital: [], deductions: [], income: [] },
   } = useFetch("/info", { method: "GET" }, []);
 
+  console.log(data);
   const { post } = useFetch("document");
   const deductions = useFetch("/deductions", { method: "GET" }, []);
   let history = useHistory();
@@ -143,6 +147,11 @@ export function Home() {
           ></NumberCard>
         </Grid>
       </Grid>
+      <Card container spacing={3}>
+        <Grid item xs={12}>
+          <SimpleSlider/>
+        </Grid>
+      </Card>
       <Card>
         <UploadModal
           open={uploadModalOpen}
