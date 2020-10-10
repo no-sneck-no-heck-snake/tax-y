@@ -126,11 +126,16 @@ def make_app():
                         income.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
 
             elif entry_type == "interest_statement":
+                iban =""
+                value =""
                 for marker in e["content"]:
                     if marker["name"] == "amount":
-                        capital.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
+                        value = marker["value"]
                     if marker["name"] == "intrests":
-                        income.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
+                        capital.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
+                    if marker["name"] == "iban":
+                        iban = marker["value"]
+                income.append({"name": iban, "value": value, "id": str(entry["_id"])})
         for i in income:
             total_income += i["value"]
         for c in capital:
