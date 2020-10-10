@@ -30,7 +30,10 @@ export function DeductionChart({ data }) {
     });
   }
 
-  useEffect(() => setTimeout(() => setMounted(true), 500), [setMounted]);
+  useEffect(() => {
+    setTimeout(() => setMounted(true), 500);
+    return () => {};
+  }, [setMounted]);
 
   return mounted ? (
     <PieChart width={400} height={400} margin={{ left: 50, top: 50 }}>

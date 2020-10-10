@@ -58,7 +58,6 @@ export function Home() {
     data = { capital: [], deductions: [], income: [] },
   } = useFetch("/info", { method: "GET" }, []);
 
-  console.log(data);
   const { post } = useFetch("document");
   const deductions = useFetch("/deductions", { method: "GET" }, []);
   let history = useHistory();
