@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
@@ -6,7 +6,7 @@ import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import useFetch from "use-http";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import UploadModal from "./UploadModal";
 
 const useStyles = makeStyles((theme) => ({

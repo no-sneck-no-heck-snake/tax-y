@@ -18,7 +18,7 @@ export function Navigation() {
     <Nav>
       <NavContent>
         <Link to="/">
-          <img src="/logo.svg" />
+          <img alt="Logo" src="/logo.svg" />
         </Link>
       </NavContent>
     </Nav>

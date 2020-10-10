@@ -12,7 +12,6 @@ import {
   faPoll,
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { getCategoryIcon, getCategoryColor } from "../category";
 
 library.add(faSchool, faChild, faFile, faPoll);
 

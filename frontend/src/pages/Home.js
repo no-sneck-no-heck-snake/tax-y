@@ -15,7 +15,6 @@ import { DeductionCategory } from "../components/DeductionCategory";
 import { DeductionChart } from "../components/DeductionChart";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
-import { SavingProgress } from "../components/SavingProgress";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import UploadModal from "../components/UploadModal";
