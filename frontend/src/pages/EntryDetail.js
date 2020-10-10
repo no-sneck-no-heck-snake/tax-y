@@ -4,9 +4,10 @@ import styled from "styled-components";
 import useFetch from 'use-http'
 import { Save } from "@material-ui/icons"
 import { MediaViewer } from "../components/MediaViewer"
-import { Grid, Card, FormControl, InputLabel, Select, TextField, Button, CardActions, CardContent, Snackbar } from "@material-ui/core"
+import { Grid, Card, FormControl, InputLabel, Select, TextField, Button, CardActions, CardContent, Snackbar, MenuItem, ListItemText, ListItemIcon } from "@material-ui/core"
 import { DOCUMENT_TYPES } from "../Config"
 import MuiAlert from '@material-ui/lab/Alert';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const FormGridRow = styled(Grid)`
   padding: 10px 0px;
@@ -75,7 +76,8 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
   useEffect(() => { loadDeductionCategories() }, []) // componentDidMount
   async function loadDeductionCategories() {
     const response = await get("/deduction_categories");
-    setDeductionCategories(response.categories)
+    if (response)
+      setDeductionCategories(response.categories)
   }
 
   const handleChange = (event) => {
@@ -143,7 +145,6 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
         <FormControl fullWidth={true} variant="filled">
           <InputLabel htmlFor="outlined-documentType">Dokumentart</InputLabel>
           <Select
-            native
             value={taxEntry.type}
             onChange={handleTypeChange}
             label="Dokumentart"
@@ -152,8 +153,8 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
               id: 'outlined-documentType',
             }}
           >
-            <option aria-label="None" value="" />
-            { DOCUMENT_TYPES.map(type => <option value={type.name}>{type.label}</option>) }
+            <MenuItem aria-label="None" value="" />
+            { DOCUMENT_TYPES.map(type => <MenuItem value={type.name}>{type.label}</MenuItem>) }
           </Select>
         </FormControl>
       </FormGridRow>
@@ -162,7 +163,6 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
           <FormControl fullWidth={true} variant="filled">
             <InputLabel htmlFor="outlined-deductionCategory">Abzugsart</InputLabel>
             <Select
-              native
               value={taxEntry.deductionCategory ?? ""}
               onChange={handleTypeChange}
               label="Abzugsart"
@@ -171,8 +171,15 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
                 id: 'outlined-deductionCategory',
               }}
             >
-              <option aria-label="None" value="" />
-              { (deductionCategories || []).map(cat => <option value={cat.type}>{cat.displayName}</option>) }
+              <MenuItem aria-label="None" value="" />
+              { (deductionCategories || []).map(cat => <MenuItem value={cat.type}>
+                <FontAwesomeIcon
+                    style={{ marginRight: "5px" }}
+                    color={cat.color}
+                    icon={["fa", cat.icon]}
+                  />
+                {cat.displayName}
+                </MenuItem>) }
             </Select>
           </FormControl>
         </FormGridRow>
