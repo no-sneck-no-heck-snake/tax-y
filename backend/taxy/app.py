@@ -62,7 +62,6 @@ def make_app():
         user_session = request.cookies.get('_taxy_session', 0)
         if "file" not in request.files:
             return {"message": "No file given in the request"}, HTTPStatus.BAD_REQUEST
-
         uploaded_file = request.files["file"]
         if uploaded_file.filename == "":
             return {"message": "No file selected for uploading"}, HTTPStatus.BAD_REQUEST
@@ -79,9 +78,10 @@ def make_app():
             target_file = base_path / (str(uuid4()) + ".jpg")
             some_image.save(str(target_file), 'JPEG')
         else:
+            print(uploaded_file.filename)
             target_file = base_path / (str(uuid4()) + Path(uploaded_file.filename).suffix)
             uploaded_file.save(str(target_file))
-            some_image = Image.open(str(uploaded_file.filename))
+            some_image = Image.open(str(target_file))
 
         result = scan_document(some_image)
 
