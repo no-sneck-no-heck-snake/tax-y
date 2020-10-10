@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
@@ -6,7 +6,8 @@ import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import useFetch from "use-http";
-import { Redirect } from 'react-router-dom'
+import {Redirect, useHistory} from 'react-router-dom'
+import UploadModal from "./UploadModal";
 
 
 
@@ -48,6 +49,9 @@ export function ImportFile() {
     const {get, post, response, loading, error} = useFetch('document')
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
+    let history = useHistory();
+    const [uploadModalOpen, setUploadModalOpen] = useState(false);
+
 
     const handleClose = () => {
         setOpen(false);
@@ -64,6 +68,8 @@ export function ImportFile() {
 
     const onChange = (event) => {
         let file = event.target.files[0];
+        setUploadModalOpen(true)
+
         let data = new FormData()
         data.append('file', file)
         if (data instanceof FormData) {
@@ -74,14 +80,16 @@ export function ImportFile() {
     async function sendData(data) {
         let id = await post('', data)
         
+            setUploadModalOpen(false);
         if (response.ok) {
-            await post('../entry/' + id.id['$oid'])
+
+            history.push('../entry/' + id.id['$oid'])
         }
     }
 
     return (
         <div className={classes.root}>
-            <div className={classes.exampleWrapper}>
+            <div  className={classes.exampleWrapper}>
                 <SpeedDial
                     ariaLabel="Import new File"
                     className={classes.speedDial}
