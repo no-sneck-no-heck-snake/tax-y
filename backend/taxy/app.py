@@ -199,6 +199,7 @@ def make_app():
 
     def __get_entry_info(user_session):
         entries = current_app.mongo.db.taxinfo.find({'user':user_session})
+        print(user_session)
         deductions = []
         income = []
         total_income = 0
@@ -254,7 +255,7 @@ def make_app():
         for ded in dedus["categories"]:
             ded["entries"] = []
             ded["currentDeduction"] = 0
-        entries = current_app.mongo.db.taxinfo.find({'user': 0})
+        entries = current_app.mongo.db.taxinfo.find({'user': get_user()})
         for entry in entries:
             e = entry["entry"]
             entry_type = e["type"]
