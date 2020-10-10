@@ -35,9 +35,6 @@ deduction_categories = {
                 
             ]
         }
-
-                
-
 def make_app():
     app = Flask(__name__)
     CORS(app)
@@ -51,7 +48,8 @@ def make_app():
 
     mongo = PyMongo(app)
     app.mongo = mongo
-
+    app.global_user = 0
+    
     @app.after_request
     def add_header(r):
         """
@@ -63,6 +61,11 @@ def make_app():
         r.headers["Expires"] = "0"
         r.headers['Cache-Control'] = 'public, max-age=0'
         return r
+
+    @app.route('/setUser/<id>')
+    def set_user(id):
+        app.global_user = int(id)
+        return "OK"
 
     def get_deduction_categories_of_current_user():
         user = current_app.mongo.db.users.find_one({"_id": get_user()})
@@ -82,7 +85,7 @@ def make_app():
         return {"categories": cats}
 
     def get_user():
-        return request.cookies.get('_taxy_session', 0)
+        return app.global_user
 
     @app.route("/document", methods=["POST"])
     def root():
@@ -113,8 +116,7 @@ def make_app():
 
         print(f'Saved file at: {target_file}')
         if not current_app.mongo.db.users.find_one({"_id": user_session}):
-            if int(user_session) == 0:
-                traits = ["student", "with_children", "married", "senior"]
+            traits = ["student", "with_children", "married", "senior"]
             current_app.mongo.db.users.insert({
                 "_id": user_session, "traits": traits
             })
