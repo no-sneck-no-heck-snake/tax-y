@@ -13,10 +13,6 @@ const NavContent = styled.section`
   align-items: center;
 `;
 
-const Spacer = styled.span`
-  flex-grow: 1;
-`;
-
 export function Navigation() {
   return (
     <Nav>
@@ -24,7 +20,6 @@ export function Navigation() {
         <Link to="/">
           <img src="/logo.svg" />
         </Link>
-        <Spacer />
       </NavContent>
     </Nav>
   );

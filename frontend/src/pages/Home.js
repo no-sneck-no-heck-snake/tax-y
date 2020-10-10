@@ -101,7 +101,7 @@ export function Home() {
   }
 
   return (
-    <div {...getRootProps()}>
+    <div {...getRootProps()} style={{ outline: "none" }}>
       {isDragActive ? (
         <Alert variant="outlined" severity="info">
           Datei hier loslassen
