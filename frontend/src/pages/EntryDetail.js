@@ -95,6 +95,8 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
       const val = fieldValues.find(v => v.name === name);
       if (val) {
         val.value = fieldValue
+      } else {
+        fieldValues.push({ name, value: fieldValue })
       }
   
       setTaxEntry({
