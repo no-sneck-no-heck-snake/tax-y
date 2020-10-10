@@ -25,25 +25,26 @@ DOCUMENT_CLASSIFYER = {
 def __get_match(content, indexes, name, data_extractor):
     entry = {"x": 0, "y": 0, "height": 0, "width": 0}
 
-    #try:
-    match, original_match = data_extractor(content)
+    try:
+        match, original_match = data_extractor(content)
 
-    match_index = indexes["text"].index(original_match)
-    return {
-        "height": indexes["height"][match_index],
-        "width": indexes["width"][match_index],
-        "top": indexes["top"][match_index],
-        "left": indexes["left"][match_index],
-        "name" :name,
-        "value": match
-    }
+        match_index = indexes["text"].index(original_match)
+        return {
+            "height": indexes["height"][match_index],
+            "width": indexes["width"][match_index],
+            "top": indexes["top"][match_index],
+            "left": indexes["left"][match_index],
+            "name" :name,
+            "value": match
+        }
             
-    """except:
+    except:
         return {
             "height": 0,
             "width": 0,
             "top": 0,
             "left": 0,
+            "value": 0,
             name: 0
         }  # well we fucked up (╯°□°)╯︵ ┻━┻"""
 
@@ -116,7 +117,7 @@ def classify_document(document_content, indexes):
     """
     Classifies what a the type of an upploaded document is
     """
-    __get_product_match(document_content)
+    # __get_product_match(document_content)
 
     for classifyer in DOCUMENT_CLASSIFYER:
         if DOCUMENT_CLASSIFYER[classifyer](document_content):

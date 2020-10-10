@@ -101,7 +101,7 @@ def make_app():
             name = None
         else:
             type = result[0]
-            content = result[1]
+            content = []
             deduction_categories = create_category_somehow()
             name = create_the_name_somehow(result[0])
         inserted_id = current_app.mongo.db.taxinfo.insert_one({
