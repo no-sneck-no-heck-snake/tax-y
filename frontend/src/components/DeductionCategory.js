@@ -3,6 +3,8 @@ import React from "react";
 import { formatFranks } from "../util";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
+
 import {
   faSchool,
   faFile,
@@ -39,15 +41,25 @@ const DeductionEntryContainer = styled.div`
   }
 `;
 
+const DetailLink = styled(Link)`
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.87);
+    &:hover {
+      color: rgba(0, 0, 0, 0.6);;
+    }
+`;
+
 function DeductionEntry({ entry }) {
   return (
-    <DeductionEntryContainer>
-      <DeductionEntryContent>
-        <span style={{ display: "block" }}>{entry.name}</span>
-        <span style={{ flexGrow: "1" }}></span>
-        <div style={{ whiteSpace: "nowrap" }}>{formatFranks(entry.value)}</div>
-      </DeductionEntryContent>
-    </DeductionEntryContainer>
+    <DetailLink to={`/entry/${entry.id}`}>
+      <DeductionEntryContainer>
+        <DeductionEntryContent>
+          <span style={{ display: "block" }}>{entry.name}</span>
+          <span style={{ flexGrow: "1" }}></span>
+          <div style={{ whiteSpace: "nowrap" }}>{formatFranks(entry.value)}</div>
+        </DeductionEntryContent>
+      </DeductionEntryContainer>
+    </DetailLink>
   );
 }
 
