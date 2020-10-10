@@ -7,6 +7,11 @@ export const DOCUMENT_TYPES = [
         name: "interest_statement",
         label: "Vermögensausweis",
         fields: [
+						{
+							label: "IBAN",
+							name: "iban",
+							type: "text"
+						},
             {
 							label: "Betrag",
 							name: "amount",

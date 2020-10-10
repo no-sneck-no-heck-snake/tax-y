@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useState} from 'react'
 import { SummaryCard } from "../components/SummaryCard";
 import { useFetch } from "use-http";
 import { Grid } from "@material-ui/core";
@@ -9,6 +9,13 @@ import { DeductionCategory } from "../components/DeductionCategory";
 import { DeductionChart } from "../components/DeductionChart";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { SavingProgress } from "../components/SavingProgress";
+import {useDropzone} from 'react-dropzone'
+import styled from 'styled-components'
+import UploadModal from '../components/UploadModal';
+import Alert from '@material-ui/lab/Alert';
+import { useHistory } from "react-router-dom"
+
 
 {
   /* <Grid container spacing={3}>
@@ -36,7 +43,30 @@ export function Home() {
     error,
     data = { capital: [], deductions: [], income: [] },
   } = useFetch("/info", { method: "GET" }, []);
+
+  const {post} = useFetch('document')
   const deductions = useFetch("/deductions", { method: "GET" }, []);
+  let history = useHistory();
+
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const onDrop = useCallback(async acceptedFiles => {
+    let file = acceptedFiles[0];
+    setUploadModalOpen(true)
+    let data = new FormData()
+    data.append('file', file)
+    if (data instanceof FormData) {
+      let response = await post('', data);
+      setUploadModalOpen(false);
+      if (response && response.id) {
+        history.push('/entry/' + response.id["$oid"])
+      } else {
+        //alert("Error on detecting")
+      }
+    }
+      
+  }, [])
+
+  const {getRootProps, isDragActive} = useDropzone({onDrop})
 
   if (error) {
     return (
@@ -57,8 +87,12 @@ export function Home() {
   }
 
   return (
-    <>
+    <div {...getRootProps()}>
+      { isDragActive ?  <Alert variant="outlined" severity="info">
+        Datei hier loslassen
+      </Alert>: <></> }
       <Card>
+        <UploadModal open={uploadModalOpen} setOpen={setUploadModalOpen}></UploadModal>
         <CardContent>
           <Typography gutterBottom={true} variant="h5">
             Abzüge
@@ -117,6 +151,8 @@ export function Home() {
           </SummaryCard>
         </Grid>
       </Grid>
-    </>
+      
+      {/* <input style={{ display: "none" }} {...getInputProps()} /> */}
+    </div>
   );
 }
