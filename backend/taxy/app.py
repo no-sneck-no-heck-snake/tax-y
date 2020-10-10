@@ -215,17 +215,17 @@ def make_app():
             elif entry_type == "interest_statement":
                 iban =""
                 value = 0
-                intrests = 0
+                interest = 0
                 for marker in e["content"]:
                     if marker["name"] == "amount":
                         value = marker["value"]
-                    if marker["name"] == "intrests":
-                        intrests = marker["value"]
+                    if marker["name"] == "interest":
+                        interest = marker["value"]
                     if marker["name"] == "iban":
                         iban = marker["value"]
 
                 capital.append({"name": iban, "value": value, "id": str(entry["_id"])})
-                income.append({"name": f'Zinsertrag {iban}', "value": intrests, "id": str(entry["_id"])})
+                income.append({"name": f'Zinsertrag {iban}', "value": interest, "id": str(entry["_id"])})
         for i in income:
             total_income += float(i["value"])
         for c in capital:
