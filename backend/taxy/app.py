@@ -45,6 +45,18 @@ def make_app():
     mongo = PyMongo(app)
     app.mongo = mongo
 
+    @app.after_request
+    def add_header(r):
+        """
+        Add headers to both force latest IE rendering engine or Chrome Frame,
+        and also to cache the rendered page for 10 minutes.
+        """
+        r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        r.headers["Pragma"] = "no-cache"
+        r.headers["Expires"] = "0"
+        r.headers['Cache-Control'] = 'public, max-age=0'
+        return r
+
     @app.route("/document", methods=["POST"])
     def root():
         user_session = request.cookies.get('_taxy_session', 0)
@@ -123,19 +135,22 @@ def make_app():
             if entry_type == "wage_card":
                 for marker in e["content"]:
                     if marker["name"] == "amount":
-                        income.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
+                        income.append({"name": f'Lohnausweis', "value": marker["value"], "id": str(entry["_id"])})
 
             elif entry_type == "interest_statement":
                 iban =""
-                value =""
+                value = 0
+                intrests = 0
                 for marker in e["content"]:
                     if marker["name"] == "amount":
                         value = marker["value"]
                     if marker["name"] == "intrests":
-                        capital.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
+                        intrests = marker["value"]
                     if marker["name"] == "iban":
                         iban = marker["value"]
-                income.append({"name": iban, "value": value, "id": str(entry["_id"])})
+
+                capital.append({"name": iban, "value": value, "id": str(entry["_id"])})
+                income.append({"name": f'Zinsertrag {iban}', "value": intrests, "id": str(entry["_id"])})
         for i in income:
             total_income += i["value"]
         for c in capital:
@@ -157,6 +172,8 @@ def make_app():
 
         return __get_entry_info(user_session)
 
+    someCompanies = ["Digitec AG", "Hornbach", "Yb-Ticketshop"]
+
     @app.route("/deductions", methods=['GET'])
     def deductions():
         dedus = deepcopy(deduction_categories)
@@ -173,7 +190,7 @@ def make_app():
                         for cat in dedus["categories"]:
                             if "deductionCategory" in e.keys():
                                 if cat["type"] == e["deductionCategory"]:
-                                    cat["entries"].append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
+                                    cat["entries"].append({"name": f'Rechnung {someCompanies[randrange(start=0, stop=3)]}', "value": marker["value"], "id": str(entry["_id"])})
                                     cat["currentDeduction"]+= marker["value"]
         return dedus
 
