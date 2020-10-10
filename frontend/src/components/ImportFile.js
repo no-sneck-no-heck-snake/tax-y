@@ -111,6 +111,10 @@ export function ImportFile() {
                        id="doc-upload"
                        type="file" />
             </div>
+            <UploadModal
+                open={uploadModalOpen}
+                setOpen={setUploadModalOpen}
+            ></UploadModal>
         </div>
     );
 }
