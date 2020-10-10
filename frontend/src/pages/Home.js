@@ -207,8 +207,6 @@ export function Home() {
           </SummaryCard>
         </Grid>
       </Grid>
-
-      {/* <input style={{ display: "none" }} {...getInputProps()} /> */}
     </div>
   );
 }
