@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import styled from "styled-components";
+import { formatFranks } from "../util";
 
 const Card = styled(_Card)`
   box-shadow: 0 2.8px 3.3px rgba(0, 0, 0, 0.028),
@@ -17,7 +18,7 @@ const Card = styled(_Card)`
   height: 100%;
 `;
 
-export function SummaryCard({ title, background, children, progress }) {
+export function SummaryCard({ title, background, children, amount }) {
   return (
     <>
       <Card style={{ background }}>
@@ -37,7 +38,7 @@ export function SummaryCard({ title, background, children, progress }) {
                   justifyContent: "flex-end",
                 }}
               >
-                {progress ? progress : <></>}
+                {amount ? formatFranks(amount) : <></>}
               </div>
             </div>
           </Typography>
