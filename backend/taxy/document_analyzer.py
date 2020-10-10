@@ -72,7 +72,7 @@ def __bill_data_extractor(content):
     return match, original_match
 
 def __iban_extractor(content):
-    m = re.compile(r"(CH\d{2}\s\d{4}\s\d{4}\s\d{4}\s?\d{4}\s?\d)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0]
+    m = re.compile(r"(CH\d{2}\s\d{4}\s\d{4}\s\d{4}\s?\w{4}\s?\w)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0]
     return m, m.split(" ")[0]
 
 
