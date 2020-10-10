@@ -123,14 +123,14 @@ def make_app():
             if entry_type == "wage_card":
                 for marker in e["content"]:
                     if marker["name"] == "amount":
-                        income.append({"name": e["file"], "value": marker["value"]})
+                        income.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
 
             elif entry_type == "interest_statement":
                 for marker in e["content"]:
                     if marker["name"] == "amount":
-                        capital.append({"name": e["file"], "value": marker["value"]})
+                        capital.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
                     if marker["name"] == "intrests":
-                        income.append({"name": e["file"], "value": marker["value"]})
+                        income.append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
         for i in income:
             total_income += i["value"]
         for c in capital:
@@ -168,7 +168,7 @@ def make_app():
                         for cat in dedus["categories"]:
                             if "deductionCategory" in e.keys():
                                 if cat["type"] == e["deductionCategory"]:
-                                    cat["entries"].append({"name": e["file"], "value": marker["value"]})
+                                    cat["entries"].append({"name": e["file"], "value": marker["value"], "id": str(entry["_id"])})
                                     cat["currentDeduction"]+= marker["value"]
         return dedus
 
