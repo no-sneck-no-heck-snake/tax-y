@@ -48,17 +48,17 @@ def __get_match(content, indexes, name, data_extractor):
         }  # well we fucked up (╯°□°)╯︵ ┻━┻"""
 
 def __wage_data_extractor(content):
-    original_match = re.compile(r"nettolohn(.|\n)*?((\d|')+)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1]
+    original_match = re.compile(r"nettolohn(.|\n)*?((\d|')+)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].strip()
     match = int(original_match.replace("'", ""))
     return match, original_match
 
 def __interest_amount_data_extractor(content):
-    original_match = re.compile(r"saldo(.|\n)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1]
-    match = float(original_match.replace("'", ""))
-    return match, original_match
+    original_match = re.compile(r"saldo(.|\n)*?((\d|'|\s)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].strip()
+    match = float(original_match.replace(" ", "").replace("'", ""))
+    return match, original_match.split(" ")[-1]
 
 def __interest_data_extractor(content):
-    original_match = re.compile(r"habenzins(.|\n)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1]
+    original_match = re.compile(r"habenzins(.|\n)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][1].strip()
     match = float(original_match.replace("'", ""))
     return match, original_match
 
@@ -67,12 +67,12 @@ def __year_data_extractor(content):
     return m, f"31.12.{m}"
 
 def __bill_data_extractor(content):
-    original_match = re.compile(r"(end|gesamt|schluss)betrag(.)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][2]
+    original_match = re.compile(r"(end|gesamt|schluss)betrag(.)*?((\d|'|)+\.\d\d)$", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0][2].strip()
     match = float(original_match.replace("'", ""))
     return match, original_match
 
 def __iban_extractor(content):
-    m = re.compile(r"(CH\d{2}\s\d{4}\s\d{4}\s\d{4}\s?\w{4}\s?\w)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0]
+    m = re.compile(r"(CH\d{2}\s\d{4}\s\d{4}\s\d{4}\s?\w{4}\s?\w)", flags=re.IGNORECASE|re.MULTILINE).findall(content)[0].strip()
     return m, m.split(" ")[0]
 
 

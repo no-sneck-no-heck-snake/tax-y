@@ -22,7 +22,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Content = styled.section`
-  padding: 32px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   margin: auto;

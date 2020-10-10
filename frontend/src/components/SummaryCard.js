@@ -17,17 +17,13 @@ const Card = styled(_Card)`
   height: 100%;
 `;
 
-const ItemContent = styled(Grid)`
-  color: white;
-`;
-
 export function SummaryCard({ title, background, children, progress }) {
   return (
     <>
       <Card style={{ background }}>
         <CardContent>
           <Typography
-            style={{ marginBottom: "16px", color: "white" }}
+            style={{ marginBottom: "16px" }}
             gutterBottom={true}
             variant="h5"
             component="h2"
