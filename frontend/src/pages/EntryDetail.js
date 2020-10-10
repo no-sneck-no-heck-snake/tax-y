@@ -47,14 +47,14 @@ export function EntryDetail() {
         {/* <Grid container item>
           <Button color="primary" component={Link} to="/">Back</Button>
         </Grid> */}
-        <Grid container item xs={6}>
+        <Grid container item md={6}>
           <Card>
             <StyledMediaViewer
                 taxEntry={taxEntry}>
               </StyledMediaViewer>
           </Card>
         </Grid>
-        <Grid container item xs={6}>
+        <Grid container item md={6}>
           <CreateEntryForm taxEntry={taxEntry} setTaxEntry={setTaxEntry}></CreateEntryForm>
         </Grid>
       </Grid>
