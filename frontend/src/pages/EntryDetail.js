@@ -65,16 +65,24 @@ export function EntryDetail() {
 function CreateEntryForm({ setTaxEntry, taxEntry }) {
   let history = useHistory();
 
-  const { put, response, loading, error } = useFetch()
+  const { get, put, response, loading, error } = useFetch()
   useEffect(() => {
     updateFields()
   }, [taxEntry]);
+
+
+  const [deductionCategories, setDeductionCategories] = useState([]);
+  useEffect(() => { loadDeductionCategories() }, []) // componentDidMount
+  async function loadDeductionCategories() {
+    const response = await get("/deduction_categories");
+    setDeductionCategories(response.categories)
+  }
 
   const handleChange = (event) => {
     const name = event.target.name;
     const fieldValue = event.target.value;
 
-    if (name === "type") {
+    if (name === "type" || name == "deductionCategory") {
       setTaxEntry({
         ...taxEntry,
         [name]: fieldValue,
@@ -149,6 +157,26 @@ function CreateEntryForm({ setTaxEntry, taxEntry }) {
           </Select>
         </FormControl>
       </FormGridRow>
+      { taxEntry.type == "bill" &&
+        <FormGridRow container item xs={12}>
+          <FormControl fullWidth={true} variant="filled">
+            <InputLabel htmlFor="outlined-deductionCategory">Abzugsart</InputLabel>
+            <Select
+              native
+              value={taxEntry.deductionCategory ?? ""}
+              onChange={handleTypeChange}
+              label="Abzugsart"
+              inputProps={{
+                name: 'deductionCategory',
+                id: 'outlined-deductionCategory',
+              }}
+            >
+              <option aria-label="None" value="" />
+              { (deductionCategories || []).map(cat => <option value={cat.type}>{cat.displayName}</option>) }
+            </Select>
+          </FormControl>
+        </FormGridRow>
+      }
       { fields.map(field => <FormGridRow container item xs={12}>
         <FormControl fullWidth={true}>
           <TextField
