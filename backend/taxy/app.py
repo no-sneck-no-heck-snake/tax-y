@@ -8,6 +8,7 @@ from random import random, randrange
 from numpy.lib.function_base import append
 import requests
 from bson.json_util import dumps
+import imutils
 
 from copy import deepcopy
 from flask import Flask, jsonify, request, current_app
@@ -73,6 +74,12 @@ def make_app():
     def get_deduction_categories_of_current_user():
         user = current_app.mongo.db.users.find_one({"_id": get_user()})
         cats = get_self_deductable_categories_of_current_user()['categories']
+        if not user:
+            if 0 == int(get_user()):
+                _traits = ["student", "with_children", "married", "senior"]
+            current_app.mongo.db.users.insert({
+                "_id": get_user(), "traits": _traits
+            })
         for trait in user["traits"]:
             if trait == "with_children":
                 cats.append(KIDS_CATEGORY)
@@ -81,6 +88,12 @@ def make_app():
     def get_self_deductable_categories_of_current_user():
         user = current_app.mongo.db.users.find_one({"_id": get_user()})
         cats = []
+        if not user:
+            if 0 == int(get_user()):
+                _traits = ["student", "with_children", "married", "senior"]
+            current_app.mongo.db.users.insert({
+                "_id": get_user(), "traits": _traits
+            })
         for trait in user["traits"]:
             if trait == "student":
                 cats.append(STUDY_CATEGORY)
@@ -115,6 +128,10 @@ def make_app():
             uploaded_file.save(str(target_file))
             some_image = Image.open(str(target_file))
             image = cv2.cvtColor(numpy.array(some_image), cv2.COLOR_RGB2BGR)
+            (h, w) = image.shape[:2
+                                ]
+            if h < w: 
+                image = imutils.rotate_bound(image, 90)
             scanner = DocScanner()
             cv2.imwrite(str(target_file), scanner.scan(image))
             some_image = Image.open(str(target_file))
@@ -132,14 +149,17 @@ def make_app():
         # error case
         if result == None:
             type = None
-            content = None
+            content = []
             category = None
             name = None
         else:
             type = result[0]
-            content = []
+            content = result[1]
             category = create_category_somehow() # remove?
             name = create_the_name_somehow(result[0])
+
+        print(f"result: {result}")
+
         inserted_id = current_app.mongo.db.taxinfo.insert_one({
             "user": user_session,
             "entry":
@@ -207,9 +227,9 @@ def make_app():
                 capital.append({"name": iban, "value": value, "id": str(entry["_id"])})
                 income.append({"name": f'Zinsertrag {iban}', "value": intrests, "id": str(entry["_id"])})
         for i in income:
-            total_income += int(i["value"])
+            total_income += float(i["value"])
         for c in capital:
-            total_capital += int(c["value"])
+            total_capital += float(c["value"])
         return {
             "income": income,
             "totalIncome": total_income,

@@ -20,6 +20,7 @@ numpy = "*"
 opencv-python = "*"
 opencv-contrib-python = "*"
 ocrd-fork-pylsd = "*"
+imutils = "*"
 
 
 [dev-packages]

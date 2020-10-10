@@ -45,7 +45,7 @@ def __get_match(content, indexes, name, data_extractor):
             "top": 0,
             "left": 0,
             "value": 0,
-            name: 0
+            "name": name
         }  # well we fucked up (╯°□°)╯︵ ┻━┻"""
 
 def __wage_data_extractor(content):
