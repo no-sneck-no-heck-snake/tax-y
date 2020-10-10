@@ -50,7 +50,6 @@ function App() {
                                         <Home/>
                                     </Route>
                                 </Switch>
-                                    <ImportFile></ImportFile>
                             </Content>
                         </div>
                     </Router>

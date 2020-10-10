@@ -23,6 +23,7 @@ import Alert from "@material-ui/lab/Alert";
 import { useHistory } from "react-router-dom";
 
 import { NumberCard } from "../components/NumberCard";
+import { ImportFile } from "../components/ImportFile";
 
 {
   /* <Grid container spacing={3}>
@@ -206,6 +207,7 @@ export function Home() {
           </SummaryCard>
         </Grid>
       </Grid>
+      <ImportFile></ImportFile>
     </div>
   );
 }
